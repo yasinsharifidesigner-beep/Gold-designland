@@ -1,0 +1,34 @@
+<%- include('partials/open', { active, mainClass: 'calm', title: heading }) %>
+<header class="idea-head">
+  <h1 class="h1s"><%= heading %></h1>
+  <p class="sub"><%= sub %></p>
+</header>
+<div class="stage">
+  <div class="anchor">
+    <% if (rows && rows.length) { %>
+      <div class="stream" id="stream">
+        <% rows.forEach(function (r) { const fade = r.fade; %>
+          <a class="past <%= fade %>" href="<%= r.href %>">
+            <span class="fade"><%- include('partials/ico', { name: icon }) %><span class="t"><%= r.title %></span><span class="d"><%= r.when %></span></span>
+            <% if (r.project) { %><span class="ptag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3.5 8.5h6.2l1.6 2.2H20.5v9.3H3.5z"/><path d="M3.5 8.5V5.8h5.2l1.4 2.2"/></svg>پروژه</span><% } %>
+          </a>
+        <% }) %>
+      </div>
+    <% } else if (hello) { %><p class="hello"><%= hello %></p><% } %>
+    <% if (kind === 'image' && shots && shots.length) { %>
+      <div class="recents">
+        <% shots.forEach(function (s) { %>
+          <a href="/panel/chats/image/<%= s.chatId %>"><%- include('partials/sketch', { shape: 'ring' }) %><% if (s.project) { %><span class="ptag">پروژه</span><% } %></a>
+        <% }) %>
+      </div>
+    <% } %>
+    <form class="composer w680" method="post" action="<%= post %>">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input type="text" name="text" placeholder="<%= placeholder %>" aria-label="<%= placeholder %>">
+      <button class="attach" type="button" title="پیوست تصویر مرجع" aria-label="پیوست تصویر مرجع"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="5" width="17" height="14" rx="2.2"/><circle cx="9" cy="10.2" r="1.6"/><path d="M3.8 16.2 8.5 12l3.2 2.6 3-3.4 5.5 5.2"/></svg></button>
+      <button class="send" type="submit" title="ارسال" aria-label="ارسال"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></button>
+    </form>
+    <% if (start) { %><a class="btn start" href="<%= start %>" style="margin-top:20px">شروع ایده‌پردازی تازه</a><% } %>
+  </div>
+</div>
+<%- include('partials/close', { auth: false }) %>

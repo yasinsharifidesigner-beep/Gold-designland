@@ -1,0 +1,14 @@
+<div class="track <%= small ? 'sm' : '' %>">
+  <i class="tline"><i style="width:<%= fill %>"></i></i>
+  <% const labels = ['ایده‌پردازی','اصلاح و انتخاب طرح','طراحیار','ساخت تصویر'];
+     const icons = ['lamp','check','box','cam'];
+     labels.forEach(function (label, i) {
+       const st = i < now ? 'done' : (i === now ? 'is-now' : '');
+       const href = links && i < now ? links[i] : '';
+  %>
+  <% if (href) { %><a class="tn <%= st %>" href="<%= href %>"><% } else { %><span class="tn <%= st %>"><% } %>
+    <span class="nd"><%- include('ico', { name: icons[i] }) %></span>
+    <span><%= label %></span>
+  <% if (href) { %></a><% } else { %></span><% } %>
+  <% }) %>
+</div>

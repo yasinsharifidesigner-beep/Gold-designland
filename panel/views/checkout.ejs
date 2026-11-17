@@ -1,0 +1,30 @@
+<%- include('partials/open', { active: 'اشتراک', mainClass: 'dash', title: 'خلاصهٔ خرید' }) %>
+<a class="backlink" href="/panel/subscription"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg>بازگشت به اشتراک</a>
+<h1 class="h1s" style="margin-top:10px">خلاصهٔ خرید</h1>
+<div class="wrapc">
+  <section class="buy">
+    <h2>اشتراک <%= plan.name %></h2>
+    <div class="term">یک ماهه</div>
+    <ul class="feats"><% plan.features.forEach(function (f) { %><li><svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#CDAE62"/><path d="M7.5 12.3l3 3.1 6-6.2" fill="none" stroke="#1F1E1C" stroke-width="2" stroke-linecap="round"/></svg><span><%= f %></span></li><% }) %></ul>
+    <div class="price"><b class="num"><%= money(plan.price) %></b><span>تومان</span></div>
+    <form class="code" method="post" action="/panel/subscription/<%= plan.code %>/discount">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input name="code" placeholder="کد تخفیف" aria-label="کد تخفیف" value="<%= code || '' %>">
+      <button class="btn-sec" type="submit">اعمال</button>
+    </form>
+    <% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+    <% if (ok) { %><p class="oknote"><%= ok %></p><% } %>
+    <div class="bill">
+      <div><em>مبلغ اشتراک</em><strong class="num"><%= money(plan.price) %> تومان</strong></div>
+      <div><em>تخفیف</em><strong class="num"><%= money(discount) %> تومان</strong></div>
+      <div class="total"><em>مبلغ نهایی</em><strong class="num"><%= money(finalAmount) %> تومان</strong></div>
+    </div>
+    <form method="post" action="/panel/subscription/pay" style="margin-top:20px">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input type="hidden" name="plan" value="<%= plan.code %>">
+      <button class="btn pay" type="submit">پرداخت</button>
+    </form>
+    <p class="note">پس از زدن پرداخت، به درگاه بانک می‌روی.</p>
+  </section>
+</div>
+<%- include('partials/close', { auth: false }) %>

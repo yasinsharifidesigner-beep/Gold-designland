@@ -1,0 +1,14 @@
+<%- include('partials/open', { active: 'دوره‌های من', mainClass: 'dash', title: 'دوره‌های من' }) %>
+<header class="head gap"><h1 class="h1s">دوره‌های من</h1><p class="sub">هر دوره‌ای رو شروع کردی، از همون‌جا که موندی ادامه بده.</p></header>
+<div class="ccols">
+  <% courses.forEach(function (c) { %>
+    <article class="ccard">
+      <div class="cover" aria-label="<%= c.title %>"><%- include('partials/sketch', { shape: c.slug === 'matrix-intro' ? 'ring' : 'square' }) %></div>
+      <div class="cbody">
+        <div class="cprog"><b><i style="width:<%= c.pct %>"></i></b><span><%= c.pct %></span></div>
+        <a class="btn sm" href="/panel/courses/<%= c.slug %>">ادامهٔ دوره</a>
+      </div>
+    </article>
+  <% }) %>
+</div>
+<%- include('partials/close', { auth: false }) %>

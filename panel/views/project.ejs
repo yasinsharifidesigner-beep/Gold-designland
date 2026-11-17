@@ -1,0 +1,35 @@
+<%- include('partials/open', { active: 'پروژه‌ها', mainClass: 'dash', title: project.title }) %>
+<div class="pd-top">
+  <div><h1><%= project.title %></h1><div class="date"><%= project.when %></div></div>
+  <a class="btn" href="<%= cont %>">ادامه از همین مرحله</a>
+</div>
+<div class="tl">
+  <% steps.forEach(function (s, i) { %>
+    <article class="step <%= s.state %>">
+      <div class="dot <%= s.state === 'done' ? 'done' : s.state === 'now' ? 'now' : 'wait' %>">
+        <% if (s.state === 'done') { %><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 12.2l3.3 3.3 7.7-7.8"/></svg><% } else if (s.state === 'wait') { %><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><% } else { %><%- include('partials/ico', { name: s.icon }) %><% } %>
+      </div>
+      <div>
+        <h2><%= s.title %></h2>
+        <% if (s.state === 'done') { %>
+          <a class="sum <%= highlight === s.key ? 'hi' : '' %>" href="<%= s.href %>"><p><%= s.summary %></p><span class="see">دیدن کامل <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 5l-7 7 7 7"/></svg></span></a>
+        <% } else if (s.state === 'now') { %>
+          <div class="panelbox <%= highlight === s.key ? 'hi' : '' %>">
+            <p class="blurb"><%= s.lines[0] %><% if (s.lines[1]) { %><br><%= s.lines[1] %><% } %></p>
+            <% if (s.designs && s.designs.length) { %>
+              <div class="thumbs">
+                <% s.designs.forEach(function (d) { %>
+                  <figure class="<%= d.selected ? 'on' : '' %>"><%- include('partials/sketch', { shape: project.shape }) %><figcaption>مدل <%= fa(d.number) %></figcaption></figure>
+                <% }) %>
+              </div>
+            <% } %>
+            <a class="btn md" href="<%= cont %>" style="margin-top:16px">ادامه از همین مرحله</a>
+          </div>
+        <% } else { %>
+          <p class="waitp">هنوز به این مرحله نرسیدی</p>
+        <% } %>
+      </div>
+    </article>
+  <% }) %>
+</div>
+<%- include('partials/close', { auth: false }) %>

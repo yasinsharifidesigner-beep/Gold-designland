@@ -1,0 +1,41 @@
+<aside class="side" id="side">
+  <a class="brand" href="/panel">GDL</a>
+  <div class="user">
+    <span class="avatar">
+      <% if (user.avatar) { %><img src="<%= user.avatar %>" alt=""><% } else { %>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M5.2 19.2c0-3.4 2.9-5.8 6.8-5.8s6.8 2.4 6.8 5.8"/></svg>
+      <% } %>
+    </span>
+    <b><%= user.firstName %> <%= user.lastName %></b>
+  </div>
+  <nav class="nav">
+    <% const items = [
+      ['desk','میز کار','/panel'],
+      ['lamp','ایده‌پردازی','/panel/chats/idea'],
+      ['check','اصلاح و انتخاب طرح','/panel/refine'],
+      ['box','طراحیار','/panel/chats/assistant'],
+      ['cam','ساخت تصویر','/panel/chats/image'],
+      ['grid','پروژه‌ها','/panel/projects'],
+      ['grad','دوره‌های من','/panel/courses'],
+      ['star','اشتراک','/panel/subscription'],
+      ['set','تنظیمات','/panel/settings']
+    ]; %>
+    <% items.forEach(function (it) { %>
+      <a class="<%= active === it[1] ? 'on' : '' %>" href="<%= it[2] %>">
+        <%- include('ico', { name: it[0] }) %>
+        <span><%= it[1] %></span>
+      </a>
+    <% }) %>
+  </nav>
+  <div class="foot">
+    <form method="post" action="/panel/theme">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <button class="tog" type="submit" title="ظاهر" aria-label="ظاهر">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"/></svg>
+      </button>
+    </form>
+  </div>
+</aside>
+<button class="menu-btn" type="button" id="menu-btn" aria-label="منو">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+</button>

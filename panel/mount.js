@@ -17,6 +17,7 @@ module.exports = function mount(app) {
     secret: process.env.SESSION_SECRET || 'gdl-panel-dev',
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' }
   }));
 
@@ -39,7 +40,28 @@ module.exports = function mount(app) {
   }
 
   function authView(res, mode, extra) {
-    res.render('auth', Object.assign({ mode, error: '', phone: '' }, extra));
+    res.render('auth', Object.assign({
+      mode: mode,
+      error: '',
+      phone: '',
+      phoneShow: '',
+      left: 58,
+      first: '',
+      last: '',
+      d: '',
+      m: '',
+      y: ''
+    }, extra || {}));
+  }
+
+  function otpDigits(body) {
+    return [0, 1, 2, 3, 4].map(function (i) {
+      return lib.toLatinDigits((body && body['d' + i]) || '');
+    }).join('');
+  }
+
+  function signupReady(req, step) {
+    return !!(req.session.signup && req.session.signup.step >= step && req.session.signup.phone);
   }
 
   app.get('/auth/login', function (req, res) { authView(res, 'login'); });
@@ -50,36 +72,65 @@ module.exports = function mount(app) {
     const phone = lib.normalizePhone(req.body.phone);
     if (!/^09\d{9}$/.test(phone)) return authView(res, 'signup1', { error: 'شماره درست نیست. مثل ۰۹۱۲۳۴۵۶۷۸۹ بنویس.', phone: req.body.phone });
     if (store.userByPhone(phone)) return authView(res, 'signup1', { error: 'این شماره قبلاً حساب دارد. از صفحهٔ ورود وارد شو.', phone: req.body.phone });
-    req.session.signup = { phone, step: 2 };
+    req.session.signup = { phone: phone, step: 2 };
     req.session.otpUntil = Date.now() + 60000;
     res.redirect('/auth/signup/verify');
   });
   app.get('/auth/signup/verify', function (req, res) {
-    if (!req.session.signup || req.session.signup.step < 2) return res.redirect('/auth/signup');
+    if (!signupReady(req, 2)) return res.redirect('/auth/signup');
     authView(res, 'signup2', { phoneShow: lib.phoneSpaced(req.session.signup.phone), left: 58 });
   });
   app.post('/auth/signup/verify', csrf, function (req, res) {
-    const code = [0, 1, 2, 3, 4].map((i) => lib.toLatinDigits(req.body['d' + i] || '')).join('');
-    if (code !== store.DEMO_CODE) return authView(res, 'signup2', { error: 'کد درست نیست. دوباره امتحان کن.', phoneShow: lib.phoneSpaced(req.session.signup.phone) });
+    if (!signupReady(req, 2)) return res.redirect('/auth/signup');
+    const code = otpDigits(req.body);
+    if (code !== store.DEMO_CODE) {
+      return authView(res, 'signup2', {
+        error: 'کد درست نیست. دوباره امتحان کن.',
+        phoneShow: lib.phoneSpaced(req.session.signup.phone),
+        left: 58
+      });
+    }
     req.session.signup.step = 3;
     res.redirect('/auth/signup/profile');
   });
   app.get('/auth/signup/profile', function (req, res) {
-    if (!req.session.signup || req.session.signup.step < 3) return res.redirect('/auth/signup');
-    authView(res, 'signup3');
+    if (!signupReady(req, 3)) return res.redirect('/auth/signup');
+    const s = req.session.signup;
+    authView(res, 'signup3', { first: s.first || '', last: s.last || '', d: s.d || '', m: s.m || '', y: s.y || '' });
   });
   app.post('/auth/signup/profile', csrf, function (req, res) {
-    if (!req.body.first || !req.body.last || !req.body.d) return authView(res, 'signup3', { error: 'نام، نام خانوادگی و تاریخ تولد را کامل کن.', first: req.body.first, last: req.body.last });
-    Object.assign(req.session.signup, { first: req.body.first, last: req.body.last, d: +req.body.d, m: +req.body.m, y: +req.body.y, step: 4 });
+    if (!signupReady(req, 3)) return res.redirect('/auth/signup');
+    const first = String(req.body.first || '').trim();
+    const last = String(req.body.last || '').trim();
+    const d = +req.body.d;
+    const m = +req.body.m;
+    const y = +req.body.y;
+    const dateOk = Number.isInteger(d) && d >= 1 && d <= 31 && Number.isInteger(m) && m >= 1 && m <= 12 && Number.isInteger(y) && y >= 1320 && y <= 1405;
+    if (!first || !last || !dateOk) {
+      return authView(res, 'signup3', {
+        error: 'نام، نام خانوادگی و تاریخ تولد را کامل کن.',
+        first: req.body.first || '',
+        last: req.body.last || '',
+        d: req.body.d || '',
+        m: req.body.m || '',
+        y: req.body.y || ''
+      });
+    }
+    Object.assign(req.session.signup, { first: first, last: last, d: d, m: m, y: y, step: 4 });
     res.redirect('/auth/signup/password');
   });
   app.get('/auth/signup/password', function (req, res) {
-    if (!req.session.signup || req.session.signup.step < 4) return res.redirect('/auth/signup');
+    if (!signupReady(req, 4)) return res.redirect('/auth/signup');
     authView(res, 'signup4');
   });
   app.post('/auth/signup/password', csrf, function (req, res) {
+    if (!signupReady(req, 4)) return res.redirect('/auth/signup');
     if (!req.body.password || req.body.password !== req.body.again) return authView(res, 'signup4', { error: 'رمز و تکرارش یکی نیستند. هر دو را دوباره بنویس.' });
     const s = req.session.signup;
+    if (store.userByPhone(s.phone)) {
+      req.session.signup = null;
+      return authView(res, 'signup1', { error: 'این شماره قبلاً حساب دارد. از صفحهٔ ورود وارد شو.', phone: s.phone });
+    }
     const user = store.createUser({ phone: s.phone, firstName: s.first, lastName: s.last, birth: { d: s.d, m: s.m, y: s.y }, password: req.body.password });
     req.session.userId = user.id;
     req.session.authMethod = 'password';
@@ -107,12 +158,19 @@ module.exports = function mount(app) {
     res.redirect('/auth/forgot/code');
   });
   app.get('/auth/forgot/code', function (req, res) {
-    if (!req.session.forgot) return res.redirect('/auth/forgot');
-    authView(res, 'forgot2', { phoneShow: lib.phoneSpaced(req.session.forgot.phone) });
+    if (!req.session.forgot || !req.session.forgot.phone) return res.redirect('/auth/forgot');
+    authView(res, 'forgot2', { phoneShow: lib.phoneSpaced(req.session.forgot.phone), left: 58 });
   });
   app.post('/auth/forgot/verify', csrf, function (req, res) {
-    const code = [0, 1, 2, 3, 4].map((i) => lib.toLatinDigits(req.body['d' + i] || '')).join('');
-    if (code !== store.DEMO_CODE) return authView(res, 'forgot2', { error: 'کد درست نیست. دوباره امتحان کن.', phoneShow: lib.phoneSpaced(req.session.forgot.phone) });
+    if (!req.session.forgot || !req.session.forgot.phone) return res.redirect('/auth/forgot');
+    const code = otpDigits(req.body);
+    if (code !== store.DEMO_CODE) {
+      return authView(res, 'forgot2', {
+        error: 'کد درست نیست. دوباره امتحان کن.',
+        phoneShow: lib.phoneSpaced(req.session.forgot.phone),
+        left: 58
+      });
+    }
     req.session.userId = req.session.forgot.userId;
     req.session.authMethod = 'otp';
     req.session.forgot = null;

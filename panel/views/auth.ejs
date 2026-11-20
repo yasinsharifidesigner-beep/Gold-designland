@@ -1,0 +1,72 @@
+<%- include('partials/open', { auth: true, title: 'ورود', csrf }) %>
+<article class="card">
+  <div class="logo"></div>
+  <div class="brand">گولد دیزاین لند</div>
+  <% if (mode === 'signup1') { %>
+    <h2>شماره موبایلت رو وارد کن</h2>
+    <div class="step">۱ از ۴</div>
+    <form method="post" action="/auth/signup">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input class="afield phone" name="phone" inputmode="numeric" placeholder="شماره موبایل" value="<%= phone || '' %>">
+      <button class="btn" type="submit">ارسال کد</button>
+    </form>
+    <a class="sublink" href="/auth/login">حساب داری؟ وارد شو</a>
+  <% } else if (mode === 'signup2' || mode === 'forgot2') { %>
+    <h2><%= mode === 'signup2' ? 'کد تأیید رو وارد کن' : 'با کد پیامکی وارد شو' %></h2>
+    <% if (mode === 'signup2') { %><div class="step">۲ از ۴</div><% } %>
+    <div class="oknote">کد برای <b class="phone"><%= phoneShow %></b> ارسال شد</div>
+    <form method="post" action="<%= mode === 'signup2' ? '/auth/signup/verify' : '/auth/forgot/verify' %>">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="otp" id="otp">
+        <% for (let i = 0; i < 5; i++) { %><input name="d<%= i %>" inputmode="numeric" maxlength="1" class="<%= i === 4 ? 'on' : '' %>"><% } %>
+      </div>
+      <div class="timer" id="timer" data-left="<%= left %>">ارسال دوباره تا <span class="num">۰:۵۸</span></div>
+      <button class="btn" type="submit"><%= mode === 'signup2' ? 'تأیید' : 'بزن بریم' %></button>
+    </form>
+    <a class="link" href="<%= mode === 'signup2' ? '/auth/signup' : '/auth/forgot' %>">اصلاح شماره</a>
+    <% if (mode === 'forgot2') { %><a class="sublink" href="/auth/login">برگشت به ورود با رمز</a><% } %>
+  <% } else if (mode === 'signup3') { %>
+    <h2>مشخصات رو وارد کن</h2>
+    <div class="step">۳ از ۴</div>
+    <form method="post" action="/auth/signup/profile">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input class="afield" name="first" placeholder="نام" value="<%= first || '' %>">
+      <input class="afield" name="last" placeholder="نام خانوادگی" value="<%= last || '' %>">
+      <div class="datesel">
+        <label class="selbox"><span>روز</span><select name="d"><option value="">روز</option><% for (let i=1;i<=31;i++) { %><option value="<%= i %>"><%= fa(i) %></option><% } %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
+        <label class="selbox"><span>ماه</span><select name="m"><option value="">ماه</option><% months.forEach(function (m, i) { %><option value="<%= i+1 %>"><%= m %></option><% }) %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
+        <label class="selbox"><span>سال</span><select name="y"><option value="">سال</option><% for (let y=1405;y>=1320;y--) { %><option value="<%= y %>"><%= fa(y) %></option><% } %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
+      </div>
+      <button class="btn" type="submit">ادامه</button>
+    </form>
+  <% } else if (mode === 'signup4') { %>
+    <h2>رمز عبور خودت رو انتخاب کن</h2>
+    <div class="step">۴ از ۴</div>
+    <form method="post" action="/auth/signup/password">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input class="afield" type="password" name="password" placeholder="رمز عبور">
+      <input class="afield" type="password" name="again" placeholder="تکرار رمز عبور">
+      <button class="btn" type="submit">بزن بریم</button>
+    </form>
+  <% } else if (mode === 'login') { %>
+    <h2>به حساب کاربریت وارد شو</h2>
+    <form method="post" action="/auth/login" style="margin-top:10px">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input class="afield phone" name="phone" inputmode="numeric" placeholder="شماره موبایل" value="<%= phone || '' %>">
+      <input class="afield" type="password" name="password" placeholder="رمز عبور">
+      <button class="btn" type="submit">بزن بریم</button>
+    </form>
+    <a class="link" href="/auth/forgot">رمزم رو فراموش کردم</a>
+    <a class="sublink" href="/auth/signup">حساب نداری؟ ثبت‌نام کن</a>
+  <% } else { %>
+    <h2>با کد پیامکی وارد شو</h2>
+    <form method="post" action="/auth/forgot" style="margin-top:10px">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input class="afield phone" name="phone" inputmode="numeric" placeholder="شماره موبایل" value="<%= phone || '' %>">
+      <button class="btn" type="submit">ارسال کد</button>
+    </form>
+    <a class="sublink" href="/auth/login">برگشت به ورود با رمز</a>
+  <% } %>
+  <% if (error) { %><p class="err"><%= error %></p><% } %>
+</article>
+<%- include('partials/close', { auth: true }) %>

@@ -1,0 +1,61 @@
+@font-face { font-family: Vazirmatn; font-weight: 400; font-style: normal; font-display: swap; src: url('../fonts/Vazirmatn-Regular-arabic.woff2') format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: Vazirmatn; font-weight: 400; font-style: normal; font-display: swap; src: url('../fonts/Vazirmatn-Regular-latin.woff2') format('woff2'); unicode-range: U+0000-00FF; }
+@font-face { font-family: Vazirmatn; font-weight: 500; font-style: normal; font-display: swap; src: url('../fonts/Vazirmatn-Medium-arabic.woff2') format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: Vazirmatn; font-weight: 500; font-style: normal; font-display: swap; src: url('../fonts/Vazirmatn-Medium-latin.woff2') format('woff2'); unicode-range: U+0000-00FF; }
+@font-face { font-family: Vazirmatn; font-weight: 600; font-style: normal; font-display: swap; src: url('../fonts/Vazirmatn-SemiBold-arabic.woff2') format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: Vazirmatn; font-weight: 600; font-style: normal; font-display: swap; src: url('../fonts/Vazirmatn-SemiBold-latin.woff2') format('woff2'); unicode-range: U+0000-00FF; }
+@font-face { font-family: Vazirmatn; font-weight: 700; font-style: normal; font-display: swap; src: url('../fonts/Vazirmatn-Bold-arabic.woff2') format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: Vazirmatn; font-weight: 700; font-style: normal; font-display: swap; src: url('../fonts/Vazirmatn-Bold-latin.woff2') format('woff2'); unicode-range: U+0000-00FF; }
+@font-face { font-family: Vazirmatn; font-weight: 800; font-style: normal; font-display: swap; src: url('../fonts/Vazirmatn-Bold-arabic.woff2') format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: Vazirmatn; font-weight: 800; font-style: normal; font-display: swap; src: url('../fonts/Vazirmatn-Bold-latin.woff2') format('woff2'); unicode-range: U+0000-00FF; }
+
+:root {
+  --dur-out: 160ms;
+  --dur-in: 500ms;
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-in: cubic-bezier(.4, 0, 1, 1);
+  --bg: #FAF8F4;
+  --bg2: #F1EDE6;
+  --surface: #FFFFFF;
+  --card: #FFFFFF;
+  --text: #1F1E1C;
+  --ink: #1F1E1C;
+  --muted: #6B675F;
+  --border: #E4DFD6;
+  --goldtxt: #8A6F2C;
+  --goldh: #8A6F2C;
+  --gold: #CDAE62;
+  --goldg: linear-gradient(135deg, #FFF6DA 0%, #F1DA9A 35%, #DDBE74 65%, #BF9B52 100%);
+  --panel: #FFFEFB;
+  --line: #EDE8DC;
+  --frame: #E3DCCF;
+  --side: 272px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--bg); color: var(--text); font-family: Vazirmatn, sans-serif; min-height: 100%; }
+a { color: inherit; text-decoration: none; }
+button, input, select { font-family: inherit; }
+button { cursor: pointer; }
+img { max-width: 100%; display: block; }
+.num, .phone { direction: ltr; unicode-bidi: isolate; text-align: right; }
+@view-transition { navigation: auto; }
+.side { view-transition-name: gdl-side; }
+.main, .auth { view-transition-name: gdl-main; }
+::view-transition-old(gdl-main) { animation: gdl-out var(--dur-out) var(--ease-in) both; }
+::view-transition-new(gdl-main) { animation: gdl-in var(--dur-in) var(--ease-out) both; }
+@keyframes gdl-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes gdl-out { to { opacity: 0; } }
+.reveal { animation: gdl-in var(--dur-in) var(--ease-out) both; }
+html:active-view-transition .reveal { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal, ::view-transition-old(gdl-main), ::view-transition-new(gdl-main) { animation: none; }
+}
+.app { display: flex; min-height: 100vh; }
+.main { flex: 1; min-width: 0; background: var(--bg); }
+.main.dash { padding: 36px 44px 40px; }
+.main.calm { padding: 36px 44px 40px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+.main.talk { padding: 22px 44px 24px; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
+.main.two { padding: 32px 40px 36px; }
+.main.set { padding: 32px 44px; }
+.err { color: #8D5A4A; font-size: 13.5px; font-weight: 500; margin-top: 8px; text-align: center; }
+.oknote { background: #E8F3EC; color: #2F6B52; font-weight: 600; font-size: 14.5px; line-height: 1.7; text-align: center; border-radius: 12px; padding: 11px 14px; margin-bottom: 14px; }

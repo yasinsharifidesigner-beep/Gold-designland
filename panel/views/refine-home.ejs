@@ -1,0 +1,33 @@
+<%- include('partials/open', { active: 'اصلاح و انتخاب طرح', mainClass: 'dash', title: 'اصلاح و انتخاب طرح' }) %>
+<header class="head gap">
+  <h1 class="h1s">اصلاح و انتخاب طرح</h1>
+  <p class="sub">طرح‌هایی که تا حالا اصلاح و انتخاب کردی، و پروژه‌هایی که هنوز در این مرحله‌اند.</p>
+</header>
+<% if (!pending.length && !picked.length) { %>
+  <p class="sub">هنوز طرحی برای اصلاح و انتخاب نداری.</p>
+<% } %>
+<% if (pending.length) { %>
+  <h2 class="group-t">هنوز در این مرحله</h2>
+  <div class="pg">
+    <% pending.forEach(function (p) { %>
+      <article class="pcard">
+        <a class="pcard-hit" href="/panel/projects/<%= p.slug %>/refine" aria-label="<%= p.title %>"></a>
+        <div class="pcard-top"><span class="th"><%- include('partials/sketch', { shape: p.shape }) %></span><div><h3><%= p.title %></h3><div class="date"><%= p.when %></div></div></div>
+        <%- include('partials/track', { now: p.now, fill: p.fill, small: true, links: null }) %>
+      </article>
+    <% }) %>
+  </div>
+<% } %>
+<% if (picked.length) { %>
+  <h2 class="group-t">طرح‌های انتخاب‌شده</h2>
+  <div class="pg">
+    <% picked.forEach(function (p) { %>
+      <article class="pcard">
+        <a class="pcard-hit" href="/panel/projects/<%= p.slug %>" aria-label="<%= p.title %>"></a>
+        <div class="pcard-top"><span class="th"><%- include('partials/sketch', { shape: p.shape }) %></span><div><h3><%= p.title %></h3><div class="date"><%= p.when %></div></div></div>
+        <%- include('partials/track', { now: p.now, fill: p.fill, small: true, links: null }) %>
+      </article>
+    <% }) %>
+  </div>
+<% } %>
+<%- include('partials/close', { auth: false }) %>

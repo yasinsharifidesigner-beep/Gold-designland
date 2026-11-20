@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= title || 'گولد دیزاین لند' %></title>
+<link rel="stylesheet" href="/ui/css/tokens.css">
+<link rel="stylesheet" href="/ui/css/components.css">
+</head>
+<body>
+<% if (typeof auth !== 'undefined' && auth) { %>
+<div class="auth reveal">
+<% } else { %>
+<div class="app">
+<%- include('side') %>
+<main class="main reveal <%= mainClass || 'dash' %>">
+<% } %>

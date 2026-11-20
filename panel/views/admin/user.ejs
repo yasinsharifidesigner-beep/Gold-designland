@@ -1,0 +1,120 @@
+<%- include('open', { bare: false, active: 'users', title: person.firstName + ' ' + person.lastName }) %>
+<header class="head">
+  <h1 class="h1s"><%= person.firstName %> <%= person.lastName %></h1>
+  <p class="sub num"><%= person.phone %> <% if (person.blocked) { %><span class="badge off">مسدود</span><% } %></p>
+</header>
+<% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+
+<section class="section">
+  <h2>مشخصات</h2>
+  <form method="post" action="/admin/users/<%= person.id %>">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="formgrid">
+      <label class="admin-field"><span>نام</span><input name="first" value="<%= person.firstName %>"></label>
+      <label class="admin-field"><span>نام خانوادگی</span><input name="last" value="<%= person.lastName %>"></label>
+      <label class="admin-field"><span>موبایل</span><input class="num" name="phone" value="<%= person.phone %>"></label>
+      <label class="admin-field"><span>روز تولد</span><input class="num" name="d" value="<%= person.birth.d %>"></label>
+      <label class="admin-field"><span>ماه تولد</span><input class="num" name="m" value="<%= person.birth.m %>"></label>
+      <label class="admin-field"><span>سال تولد</span><input class="num" name="y" value="<%= person.birth.y %>"></label>
+    </div>
+    <div class="actions"><button class="btn" type="submit">ذخیره</button></div>
+  </form>
+</section>
+
+<section class="section">
+  <h2>رمز و مسدودسازی</h2>
+  <form method="post" action="/admin/users/<%= person.id %>/password">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <label class="admin-field"><span>رمز تازه</span><input type="text" name="password" autocomplete="off"></label>
+    <div class="actions"><button class="btn" type="submit">ثبت رمز</button></div>
+  </form>
+  <form method="post" action="/admin/users/<%= person.id %>/block" style="margin-top:12px">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <button class="danger" type="submit"><%= person.blocked ? 'رفع مسدودی' : 'مسدود کردن' %></button>
+  </form>
+</section>
+
+<section class="section">
+  <h2>اشتراک و سهمیه</h2>
+  <form method="post" action="/admin/users/<%= person.id %>/quota">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="formgrid">
+      <label class="admin-field"><span>نام اشتراک</span><input name="sub_name" value="<%= person.subscription ? person.subscription.name : '' %>"></label>
+      <label class="admin-field"><span>کد اشتراک</span><input name="sub_code" value="<%= person.subscription ? person.subscription.code : '' %>"></label>
+      <label class="admin-field"><span>شروع</span><input name="sub_start" value="<%= person.subscription ? person.subscription.start : '' %>"></label>
+      <label class="admin-field"><span>پایان</span><input name="sub_end" value="<%= person.subscription ? person.subscription.end : '' %>"></label>
+      <label class="admin-field"><span>درصد باقی‌مانده</span><input name="sub_pct" value="<%= person.subscription ? person.subscription.pct : '' %>"></label>
+      <label class="admin-field"><span>پیام هدیهٔ کل</span><input class="num" name="gift_total" value="<%= person.giftTotal %>"></label>
+      <label class="admin-field"><span>پیام هدیهٔ مصرف‌شده</span><input class="num" name="gift_used" value="<%= person.giftUsed %>"></label>
+      <label class="admin-field"><span>سهمیهٔ پیام باقی‌مانده</span><input class="num" name="message_left" value="<%= person.messageLeft %>"></label>
+      <label class="admin-field"><span>سهمیهٔ تصویر باقی‌مانده</span><input class="num" name="image_left" value="<%= person.imageLeft %>"></label>
+      <label class="checkline"><input type="checkbox" name="clear_sub" value="1"> <span>حذف اشتراک فعال</span></label>
+    </div>
+    <p class="empty-note">برای سهمیهٔ نامحدود، ۱- بگذار. پیام هدیه همان عددی است که کاربر در پنل می‌بیند.</p>
+    <div class="actions"><button class="btn" type="submit">ذخیره</button></div>
+  </form>
+</section>
+
+<section class="section">
+  <h2>دوره‌ها</h2>
+  <form method="post" action="/admin/users/<%= person.id %>/courses">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <% courses.forEach(function (c) { %>
+      <div style="margin-bottom:12px">
+        <label class="checkline"><input type="checkbox" name="course_<%= c.id %>" value="1" <%= c.enrolled ? 'checked' : '' %>> <b><%= c.title %></b></label>
+        <% c.sessions.forEach(function (s) { %>
+          <label class="checkline" style="margin-inline-start:18px"><input type="checkbox" name="seen_<%= s.id %>" value="1" <%= s.seen ? 'checked' : '' %>> <%= s.title %></label>
+        <% }) %>
+      </div>
+    <% }) %>
+    <div class="actions"><button class="btn" type="submit">ذخیرهٔ دسترسی</button></div>
+  </form>
+</section>
+
+<section class="section">
+  <h2>پروژه‌ها</h2>
+  <% if (!projects.length) { %><p class="empty-note">پروژه‌ای نیست.</p><% } %>
+  <% projects.forEach(function (p) { %>
+    <div class="checkline"><a class="rowlink" href="/admin/projects/<%= p.slug %>"><%= p.title %></a><span><%= p.when %></span></div>
+  <% }) %>
+</section>
+
+<section class="section">
+  <h2>گفت‌وگوها</h2>
+  <% if (!chats.length) { %><p class="empty-note">گفت‌وگویی نیست.</p><% } %>
+  <% chats.forEach(function (c) { %>
+    <div class="checkline">
+      <a class="rowlink" href="/admin/chats/<%= c.id %>"><%= c.title %></a>
+      <span class="badge"><%= c.kindLabel %></span>
+      <span class="num"><%= fa(c.messages.length) %> پیام</span>
+    </div>
+  <% }) %>
+</section>
+
+<section class="section">
+  <h2>تصویرها</h2>
+  <% if (!images.length) { %><p class="empty-note">تصویری نیست.</p><% } %>
+  <% images.forEach(function (img) { %>
+    <div class="checkline"><a class="rowlink" href="/admin/chats/<%= img.chatId %>"><%= img.id %></a><% if (img.project) { %><span class="badge">پروژه</span><% } %></div>
+  <% }) %>
+</section>
+
+<section class="section">
+  <h2>خریدها</h2>
+  <% if (!purchases.length) { %><p class="empty-note">خریدی نیست.</p><% } %>
+  <% purchases.forEach(function (p) { %>
+    <div class="checkline"><a class="rowlink" href="/admin/purchases/<%= p.id %>"><%= p.plan_name %></a><span class="num"><%= money(p.amount) %></span><span><%= when(p.created_at) %></span></div>
+  <% }) %>
+  <a class="btn" href="/admin/purchases/new?phone=<%= person.phone %>" style="margin-top:10px">ثبت خرید</a>
+</section>
+
+<section class="section">
+  <h2>فعالیت</h2>
+  <div class="timeline">
+    <% activity.forEach(function (row) { %>
+      <div class="ev"><div><%= row.summary %></div><small class="num"><%= when(row.created_at) %></small></div>
+    <% }) %>
+    <% if (!activity.length) { %><p class="empty-note">فعالیتی نیست.</p><% } %>
+  </div>
+</section>
+<%- include('close', { bare: false }) %>

@@ -6,7 +6,7 @@
 <script>
 (function(){try{var s=localStorage.getItem('gdl-theme');var t=(s==='light'||s==='dark')?s:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');var h=document.documentElement;h.setAttribute('data-theme',t);h.style.backgroundColor=t==='dark'?'#071A33':'#FAF8F4';h.style.colorScheme=t;}catch(e){}})();
 </script>
-<title><%= title || 'گولد دیزاین لند' %></title>
+<title><%= title || t('common.brand') %></title>
 <link rel="stylesheet" href="/ui/css/tokens.css">
 <link rel="stylesheet" href="/ui/css/components.css">
 </head>

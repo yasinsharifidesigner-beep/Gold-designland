@@ -1,0 +1,33 @@
+<%- include('open', { bare: false, active: active, title: title }) %>
+<header class="head"><h1 class="h1s"><%= title %></h1></header>
+<% if (tabs) { %>
+<div class="tabs-mini">
+  <% tabs.forEach(function (tab) { %>
+    <a class="<%= tab.on ? 'on' : '' %>" href="<%= tab.href %>"><%= tab.label %></a>
+  <% }) %>
+</div>
+<% } %>
+<form class="toolsbar" method="get" action="<%= base %>">
+  <% if (kind) { %><input type="hidden" name="kind" value="<%= kind %>"><% } %>
+  <input class="grow" type="search" name="q" value="<%= q %>" placeholder="عنوان یا نام کاربر" aria-label="جست‌وجو">
+  <button class="btn" type="submit">جست‌وجو</button>
+</form>
+<div class="table-wrap">
+  <table class="atable">
+    <thead><tr><th>عنوان</th><th>نوع</th><th>کاربر</th><th>پیام</th><th>زمان</th></tr></thead>
+    <tbody>
+      <% rows.forEach(function (c) { %>
+        <tr>
+          <td><a class="rowlink" href="/admin/chats/<%= c.id %>"><%= c.title %></a></td>
+          <td><%= c.kindLabel %></td>
+          <td><%= c.userName %></td>
+          <td class="num"><%= fa(c.messages) %></td>
+          <td><%= c.when %></td>
+        </tr>
+      <% }) %>
+      <% if (!rows.length) { %><tr><td colspan="5">گفت‌وگویی پیدا نشد.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('pager') %>
+<%- include('close', { bare: false }) %>

@@ -1,6 +1,6 @@
 <div class="track <%= small ? 'sm' : '' %>">
   <i class="tline"><i style="width:<%= fill %>"></i></i>
-  <% const labels = ['ایده‌پردازی','اصلاح و انتخاب طرح','طراحیار','ساخت تصویر'];
+  <% const labels = [t('stage.idea'), t('stage.refine'), t('stage.assistant'), t('stage.image')];
      const icons = ['lamp','check','box','cam'];
      labels.forEach(function (label, i) {
        const st = i < now ? 'done' : (i === now ? 'is-now' : '');

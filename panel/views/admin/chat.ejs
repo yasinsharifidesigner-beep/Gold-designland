@@ -1,0 +1,51 @@
+<%- include('open', { bare: false, active: chat.kind === 'idea' ? 'ideas' : 'chats', title: chat.title }) %>
+<header class="head">
+  <h1 class="h1s"><%= chat.title %></h1>
+  <p class="sub"><a class="rowlink" href="/admin/users/<%= chat.userId %>"><%= userName %></a> — <%= kindLabel %></p>
+</header>
+<% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+<section class="section">
+  <form method="post" action="/admin/chats/<%= chat.id %>">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="formgrid">
+      <label class="admin-field"><span>عنوان</span><input name="title" value="<%= chat.title %>"></label>
+      <label class="admin-field"><span>زمان نمایشی</span><input name="when" value="<%= chat.when %>"></label>
+    </div>
+    <div class="actions"><button class="btn" type="submit">ذخیره</button></div>
+  </form>
+</section>
+<section class="section">
+  <h2>پیام‌ها</h2>
+  <% chat.messages.forEach(function (m) { %>
+    <form class="msgline" method="post" action="/admin/chats/<%= chat.id %>/messages/<%= m.id %>">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <select name="role">
+        <option value="user" <%= m.role === 'user' ? 'selected' : '' %>>کاربر</option>
+        <option value="assistant" <%= m.role === 'assistant' ? 'selected' : '' %>>دستیار</option>
+      </select>
+      <textarea name="text"><%= m.text %></textarea>
+      <span class="actions" style="margin-top:0">
+        <button class="btn sm" type="submit">ذخیره</button>
+        <button class="danger" type="submit" name="remove" value="1">حذف</button>
+      </span>
+    </form>
+  <% }) %>
+  <% if (!chat.messages.length) { %><p class="empty-note">پیامی نیست.</p><% } %>
+  <form method="post" action="/admin/chats/<%= chat.id %>/messages" style="margin-top:12px">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="formgrid">
+      <label class="admin-field"><span>نقش</span>
+        <select name="role"><option value="user">کاربر</option><option value="assistant">دستیار</option></select>
+      </label>
+      <label class="admin-field full"><span>پیام تازه</span><textarea name="text"></textarea></label>
+    </div>
+    <div class="actions"><button class="btn" type="submit">افزودن پیام</button></div>
+  </form>
+</section>
+<section class="section">
+  <form method="post" action="/admin/chats/<%= chat.id %>/delete">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <button class="danger" type="submit">حذف گفت‌وگو</button>
+  </form>
+</section>
+<%- include('close', { bare: false }) %>

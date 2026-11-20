@@ -1,0 +1,10 @@
+<%- include('open', { bare: false, active: 'texts', title: 'ویرایش متن' }) %>
+<header class="head"><h1 class="h1s">ویرایش متن</h1><p class="sub"><%= groupLabel %> — <span class="num"><%= row.key %></span></p></header>
+<section class="section">
+  <form method="post" action="/admin/texts/<%= encodeURIComponent(row.key) %>">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <label class="admin-field"><span>متن</span><textarea name="value" style="min-height:160px"><%= row.value %></textarea></label>
+    <div class="actions"><button class="btn" type="submit">ذخیره</button></div>
+  </form>
+</section>
+<%- include('close', { bare: false }) %>

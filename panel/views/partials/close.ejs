@@ -5,13 +5,13 @@
 </div>
 <div class="modal" id="logout" hidden>
   <div class="dialog">
-    <h2>می‌خوای از حسابت خارج بشی؟</h2>
+    <h2><%= t('common.logoutAsk') %></h2>
     <div class="rowb">
       <form method="post" action="/auth/logout">
         <input type="hidden" name="_csrf" value="<%= csrf %>">
-        <button class="btn-sec outbtn" type="submit">خروج</button>
+        <button class="btn-sec outbtn" type="submit"><%= t('common.logout') %></button>
       </form>
-      <button class="btn-sec" type="button" id="logout-cancel">انصراف</button>
+      <button class="btn-sec" type="button" id="logout-cancel"><%= t('common.cancel') %></button>
     </div>
   </div>
 </div>

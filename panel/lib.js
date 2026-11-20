@@ -45,7 +45,21 @@ function checkCsrf(req) {
   return req.body && req.body._csrf && req.body._csrf === req.session.csrf;
 }
 
+function faWhen(value) {
+  if (!value) return '';
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
+    timeZone: 'Asia/Tehran',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date);
+}
+
 module.exports = {
   faDigits, faMoney, toLatinDigits, normalizePhone, phoneSpaced, phoneMasked,
-  MONTHS, csrfToken, checkCsrf
+  MONTHS, csrfToken, checkCsrf, faWhen
 };

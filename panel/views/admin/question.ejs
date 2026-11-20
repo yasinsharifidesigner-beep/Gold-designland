@@ -1,0 +1,62 @@
+<%- include('open', { bare: false, active: 'questions', title: question ? 'ویرایش سؤال' : 'سؤال جدید' }) %>
+<header class="head"><h1 class="h1s"><%= question ? 'ویرایش سؤال' : 'سؤال جدید' %></h1></header>
+<% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+<section class="section">
+  <form method="post" action="<%= question ? '/admin/questions/' + question.id : '/admin/questions' %>">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <% if (!question) { %><input type="hidden" name="flow" value="<%= flow %>"><% } %>
+    <div class="formgrid">
+      <label class="admin-field full"><span>متن سؤال</span><input name="title" value="<%= question ? question.title : '' %>"></label>
+      <label class="admin-field"><span>خط جدید بعد از چند گزینهٔ گروه اول</span><input class="num" name="break_after" value="<%= question ? question.breakAfter : 0 %>"></label>
+      <label class="checkline"><input type="checkbox" name="confirm" value="1" <%= question && question.confirm ? 'checked' : '' %>> <span>دکمهٔ تأیید و دیدن طرح‌ها</span></label>
+      <label class="checkline"><input type="checkbox" name="active" value="1" <%= !question || question.active ? 'checked' : '' %>> <span>فعال</span></label>
+    </div>
+    <% if (question) { %>
+      <h2 style="margin:16px 0 8px">گزینه‌ها</h2>
+      <input type="hidden" name="opt_count" value="<%= question.options.length %>">
+      <% question.options.forEach(function (o, i) { %>
+        <div class="formgrid" style="margin-bottom:8px">
+          <input type="hidden" name="opt_id_<%= i %>" value="<%= o.id %>">
+          <label class="admin-field"><span>گزینه</span><input name="opt_text_<%= i %>" value="<%= o.text %>"></label>
+          <label class="admin-field"><span>گروه</span><input name="opt_group_<%= i %>" value="<%= o.groupLabel %>"></label>
+          <label class="admin-field"><span>نقش گروه</span>
+            <select name="opt_role_<%= i %>">
+              <option value="" <%= !o.groupRole ? 'selected' : '' %>>عادی</option>
+              <option value="style" <%= o.groupRole === 'style' ? 'selected' : '' %>>سبک خروجی</option>
+              <option value="count" <%= o.groupRole === 'count' ? 'selected' : '' %>>تعداد نمونه</option>
+            </select>
+          </label>
+          <label class="admin-field"><span>نوع</span>
+            <select name="opt_suggest_<%= i %>">
+              <option value="0" <%= !o.suggest ? 'selected' : '' %>>گزینهٔ معمولی</option>
+              <option value="1" <%= o.suggest ? 'selected' : '' %>>پیشنهاد سیستم (بدون ثبت)</option>
+            </select>
+          </label>
+        </div>
+      <% }) %>
+    <% } %>
+    <div class="actions"><button class="btn" type="submit">ذخیره</button></div>
+  </form>
+  <% if (question) { %>
+    <form method="post" action="/admin/questions/<%= question.id %>/options" style="margin-top:10px">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <button class="btn-sec" type="submit">افزودن گزینه</button>
+    </form>
+  <% } %>
+</section>
+<% if (question) { %>
+<section class="section">
+  <h2>حذف گزینه</h2>
+  <% question.options.forEach(function (o) { %>
+    <form method="post" action="/admin/questions/<%= question.id %>/options/<%= o.id %>/delete" style="display:inline">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <button class="btn-sec" type="submit"><%= o.text %></button>
+    </form>
+  <% }) %>
+  <form method="post" action="/admin/questions/<%= question.id %>/delete" style="margin-top:16px">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <button class="danger" type="submit">حذف سؤال</button>
+  </form>
+</section>
+<% } %>
+<%- include('close', { bare: false }) %>

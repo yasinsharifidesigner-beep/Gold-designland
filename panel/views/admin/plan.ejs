@@ -1,0 +1,31 @@
+<%- include('open', { bare: false, active: 'plans', title: plan ? plan.name : 'اشتراک جدید' }) %>
+<header class="head"><h1 class="h1s"><%= plan ? plan.name : 'اشتراک جدید' %></h1></header>
+<% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+<section class="section">
+  <form method="post" action="<%= plan ? '/admin/plans/' + plan.id : '/admin/plans' %>">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="formgrid">
+      <label class="admin-field"><span>کد</span><input name="code" value="<%= plan ? plan.code : '' %>" <%= plan ? 'readonly' : '' %>></label>
+      <label class="admin-field"><span>نام</span><input name="name" value="<%= plan ? plan.name : '' %>"></label>
+      <label class="admin-field"><span>قیمت (تومان)</span><input name="price" class="num" value="<%= plan ? plan.price : '' %>"></label>
+      <label class="admin-field"><span>ترتیب</span><input name="sort" class="num" value="<%= plan ? plan.sort : '' %>"></label>
+      <label class="admin-field"><span>تعداد پیام</span><input name="message_count" class="num" value="<%= plan && plan.messageCount >= 0 ? plan.messageCount : '' %>"></label>
+      <label class="admin-field"><span>تعداد ساخت تصویر</span><input name="image_count" class="num" value="<%= plan && plan.imageCount >= 0 ? plan.imageCount : '' %>"></label>
+      <label class="checkline"><input type="checkbox" name="message_unlimited" value="1" <%= plan && plan.messageCount < 0 ? 'checked' : '' %>> <span>پیام نامحدود</span></label>
+      <label class="checkline"><input type="checkbox" name="image_unlimited" value="1" <%= plan && plan.imageCount < 0 ? 'checked' : '' %>> <span>تصویر نامحدود</span></label>
+      <label class="checkline"><input type="checkbox" name="featured" value="1" <%= plan && plan.featured ? 'checked' : '' %>> <span>پیشنهاد ما</span></label>
+      <label class="checkline"><input type="checkbox" name="active" value="1" <%= !plan || plan.active ? 'checked' : '' %>> <span>فعال</span></label>
+      <label class="admin-field full"><span>امکانات (هر خط یکی)</span><textarea name="features"><%= plan ? (plan.features || []).join('\n') : '' %></textarea></label>
+    </div>
+    <div class="actions"><button class="btn" type="submit">ذخیره</button></div>
+  </form>
+</section>
+<% if (plan) { %>
+<section class="section">
+  <form method="post" action="/admin/plans/<%= plan.id %>/delete">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <button class="danger" type="submit">حذف اشتراک</button>
+  </form>
+</section>
+<% } %>
+<%- include('close', { bare: false }) %>

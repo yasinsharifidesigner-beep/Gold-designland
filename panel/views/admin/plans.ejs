@@ -1,0 +1,21 @@
+<%- include('open', { bare: false, active: 'plans', title: 'اشتراک‌ها' }) %>
+<header class="head"><h1 class="h1s">اشتراک‌ها</h1></header>
+<div class="toolsbar"><a class="btn" href="/admin/plans/new">اشتراک جدید</a></div>
+<div class="table-wrap">
+  <table class="atable">
+    <thead><tr><th>نام</th><th>قیمت</th><th>پیام</th><th>تصویر</th><th>وضعیت</th></tr></thead>
+    <tbody>
+      <% rows.forEach(function (p) { %>
+        <tr>
+          <td><a class="rowlink" href="/admin/plans/<%= p.id %>"><%= p.name %></a></td>
+          <td class="num"><%= money(p.price) %></td>
+          <td class="num"><%= p.messageCount < 0 ? 'نامحدود' : fa(p.messageCount) %></td>
+          <td class="num"><%= p.imageCount < 0 ? 'نامحدود' : fa(p.imageCount) %></td>
+          <td><% if (p.active) { %><span class="badge">فعال</span><% } else { %><span class="badge off">خاموش</span><% } %></td>
+        </tr>
+      <% }) %>
+      <% if (!rows.length) { %><tr><td colspan="5">اشتراکی نیست.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('close', { bare: false }) %>

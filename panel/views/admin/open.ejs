@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<script>
+(function(){try{var s=localStorage.getItem('gdl-theme');var t=(s==='light'||s==='dark')?s:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');var h=document.documentElement;h.setAttribute('data-theme',t);h.style.backgroundColor=t==='dark'?'#071A33':'#FAF8F4';h.style.colorScheme=t;}catch(e){}})();
+</script>
+<title><%= title || 'مدیریت' %></title>
+<link rel="stylesheet" href="/ui/css/tokens.css">
+<link rel="stylesheet" href="/ui/css/components.css">
+<link rel="stylesheet" href="/ui/css/admin.css">
+</head>
+<body>
+<% if (bare) { %>
+<div class="auth reveal">
+<% } else { %>
+<div class="app">
+<%- include('side', { active: active }) %>
+<main class="main dash reveal">
+<% if (typeof note !== 'undefined' && note) { %><p class="oknote"><%= note %></p><% } %>
+<% } %>

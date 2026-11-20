@@ -1,0 +1,29 @@
+<%- include('open', { bare: false, active: 'texts', title: 'متن‌های سایت' }) %>
+<header class="head"><h1 class="h1s">متن‌های سایت</h1><p class="sub">تغییرها همان لحظه روی صفحهٔ اصلی، ورود و پنل دیده می‌شود.</p></header>
+<form class="toolsbar" method="get" action="/admin/texts">
+  <input class="grow" type="search" name="q" value="<%= q %>" placeholder="متن یا کلید" aria-label="جست‌وجو">
+  <select name="g" aria-label="صفحه">
+    <option value="">همهٔ صفحه‌ها</option>
+    <% groups.forEach(function (g) { %>
+      <option value="<%= g.id %>" <%= g.id === group ? 'selected' : '' %>><%= g.label %></option>
+    <% }) %>
+  </select>
+  <button class="btn" type="submit">جست‌وجو</button>
+</form>
+<div class="table-wrap">
+  <table class="atable">
+    <thead><tr><th>صفحه</th><th>متن</th><th></th></tr></thead>
+    <tbody>
+      <% rows.forEach(function (row) { %>
+        <tr>
+          <td><%= row.groupLabel %></td>
+          <td><%= row.value %></td>
+          <td><a class="rowlink" href="/admin/texts/<%= encodeURIComponent(row.key) %>">ویرایش</a></td>
+        </tr>
+      <% }) %>
+      <% if (!rows.length) { %><tr><td colspan="3">متنی پیدا نشد.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('pager') %>
+<%- include('close', { bare: false }) %>

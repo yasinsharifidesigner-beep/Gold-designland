@@ -1,0 +1,28 @@
+<%- include('open', { bare: false, active: 'purchases', title: 'خریدها' }) %>
+<header class="head"><h1 class="h1s">خریدها</h1></header>
+<div class="toolsbar">
+  <form class="toolsbar" method="get" action="/admin/purchases" style="flex:1;margin:0">
+    <input class="grow" type="search" name="q" value="<%= q %>" placeholder="نام، شماره یا اشتراک" aria-label="جست‌وجو">
+    <button class="btn" type="submit">جست‌وجو</button>
+  </form>
+  <a class="btn" href="/admin/purchases/new">خرید دستی</a>
+</div>
+<div class="table-wrap">
+  <table class="atable">
+    <thead><tr><th>کاربر</th><th>اشتراک</th><th>مبلغ</th><th>وضعیت</th><th>زمان</th></tr></thead>
+    <tbody>
+      <% rows.forEach(function (p) { %>
+        <tr>
+          <td><a class="rowlink" href="/admin/purchases/<%= p.id %>"><%= p.userName %></a></td>
+          <td><%= p.plan_name %></td>
+          <td class="num"><%= money(p.amount) %></td>
+          <td><%= p.statusLabel %></td>
+          <td class="num"><%= when(p.created_at) %></td>
+        </tr>
+      <% }) %>
+      <% if (!rows.length) { %><tr><td colspan="5">خریدی پیدا نشد.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('pager') %>
+<%- include('close', { bare: false }) %>

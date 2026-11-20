@@ -1,0 +1,29 @@
+<%- include('open', { bare: false, active: 'projects', title: project.title }) %>
+<header class="head"><h1 class="h1s"><%= project.title %></h1><p class="sub"><a class="rowlink" href="/admin/users/<%= project.userId %>"><%= userName %></a></p></header>
+<% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+<section class="section">
+  <form method="post" action="/admin/projects/<%= project.slug %>">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="formgrid">
+      <label class="admin-field"><span>عنوان</span><input name="title" value="<%= project.title %>"></label>
+      <label class="admin-field"><span>زمان نمایشی</span><input name="when" value="<%= project.when %>"></label>
+      <label class="admin-field"><span>مرحله</span>
+        <select name="stage">
+          <% stages.forEach(function (s) { %><option value="<%= s[0] %>" <%= project.stage === s[0] ? 'selected' : '' %>><%= s[1] %></option><% }) %>
+        </select>
+      </label>
+      <label class="admin-field"><span>شکل طرح</span><input name="shape" value="<%= project.shape %>"></label>
+      <label class="admin-field full"><span>خلاصه</span><textarea name="summary"><%= project.summary %></textarea></label>
+      <label class="admin-field full"><span>توضیح مرحله (هر خط جدا)</span><textarea name="blurb"><%= (project.blurb || []).join('\n') %></textarea></label>
+    </div>
+    <div class="actions"><button class="btn" type="submit">ذخیره</button></div>
+  </form>
+</section>
+<section class="section">
+  <h2>حذف</h2>
+  <form method="post" action="/admin/projects/<%= project.slug %>/delete">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <button class="danger" type="submit">حذف پروژه</button>
+  </form>
+</section>
+<%- include('close', { bare: false }) %>

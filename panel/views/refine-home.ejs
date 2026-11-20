@@ -10,10 +10,11 @@
   <h2 class="group-t">هنوز در این مرحله</h2>
   <div class="pg">
     <% pending.forEach(function (p) { %>
-      <a class="pcard" href="/panel/projects/<%= p.slug %>/refine">
+      <article class="pcard">
+        <a class="pcard-hit" href="/panel/projects/<%= p.slug %>/refine" aria-label="<%= p.title %>"></a>
         <div class="pcard-top"><span class="th"><%- include('partials/sketch', { shape: p.shape }) %></span><div><h3><%= p.title %></h3><div class="date"><%= p.when %></div></div></div>
         <%- include('partials/track', { now: p.now, fill: p.fill, small: true, links: null }) %>
-      </a>
+      </article>
     <% }) %>
   </div>
 <% } %>
@@ -21,10 +22,11 @@
   <h2 class="group-t">طرح‌های انتخاب‌شده</h2>
   <div class="pg">
     <% picked.forEach(function (p) { %>
-      <a class="pcard" href="/panel/projects/<%= p.slug %>">
+      <article class="pcard">
+        <a class="pcard-hit" href="/panel/projects/<%= p.slug %>" aria-label="<%= p.title %>"></a>
         <div class="pcard-top"><span class="th"><%- include('partials/sketch', { shape: p.shape }) %></span><div><h3><%= p.title %></h3><div class="date"><%= p.when %></div></div></div>
         <%- include('partials/track', { now: p.now, fill: p.fill, small: true, links: null }) %>
-      </a>
+      </article>
     <% }) %>
   </div>
 <% } %>

@@ -9,10 +9,11 @@
     <b>شروع پروژهٔ جدید</b>
   </a>
   <% projects.forEach(function (p) { %>
-    <a class="pcard" href="/panel/projects/<%= p.slug %>">
+    <article class="pcard">
+      <a class="pcard-hit" href="/panel/projects/<%= p.slug %>" aria-label="<%= p.title %>"></a>
       <div class="pcard-top"><span class="th"><%- include('partials/sketch', { shape: p.shape }) %></span><div><h3><%= p.title %></h3><div class="date"><%= p.when %></div></div></div>
       <%- include('partials/track', { now: p.now, fill: p.fill, small: true, links: p.links }) %>
-    </a>
+    </article>
   <% }) %>
 </div>
 <%- include('partials/close', { auth: false }) %>

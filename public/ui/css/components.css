@@ -155,8 +155,8 @@
 .toast { position: fixed; bottom: 24px; left: 24px; background: var(--panel); border: 1px solid #CDAE62; color: var(--goldtxt); border-radius: 12px; padding: 10px 16px; font-weight: 600; box-shadow: 0 4px 14px rgba(191,155,82,.25); }
 
 .track { position: relative; display: flex; padding: 0 4px; }
-.tn { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; gap: 8px; background: none; border: 0; color: inherit; }
-.nd { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid #DDD6C8; color: #8A857C; box-shadow: 0 1px 2px rgba(31,30,28,.04); }
+.tn { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; gap: 8px; background: none; border: 0; color: inherit; text-decoration: none; }
+.nd { position: relative; z-index: 1; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid #DDD6C8; color: #8A857C; box-shadow: 0 1px 2px rgba(31,30,28,.04); }
 .nd svg { width: 17px; height: 17px; }
 .track.sm .nd svg { width: 12px; height: 12px; }
 .tn span { font-size: 11.5px; font-weight: 600; line-height: 16.7px; color: var(--muted); text-align: center; }
@@ -165,18 +165,22 @@
 .tn.done span { color: var(--ink); }
 .tn.is-now .nd { box-shadow: 0 0 0 4px rgba(235,210,142,.55), 0 0 22px rgba(191,155,82,.55), 0 4px 12px rgba(191,155,82,.35); }
 .tn.is-now span { font-weight: 700; color: var(--goldtxt); }
-.tline { position: absolute; top: 20px; inset-inline: 12.5%; height: 6px; background: #E8E2D6; border-radius: 6px; z-index: 0; }
-.tline i { display: block; height: 100%; margin-inline-start: auto; background: #CDAE62; border-radius: 6px; box-shadow: 0 0 12px rgba(191,155,82,.45); }
+.tline { position: absolute; top: 17px; height: 6px; inset-inline-start: calc(4px + (100% - 8px) / 8); inset-inline-end: calc(4px + (100% - 8px) / 8); background: #E8E2D6; border-radius: 6px; z-index: 0; display: flex; justify-content: flex-start; }
+.tline i { display: block; height: 100%; margin-inline-end: auto; flex: none; background: #CDAE62; border-radius: 6px; box-shadow: 0 0 12px rgba(191,155,82,.45); }
 .track.sm .nd { width: 26px; height: 26px; }
 .track.sm .tn { gap: 5px; }
 .track.sm .tn span { font-size: 9.5px; line-height: 12.8px; }
-.track.sm .tline { top: 13px; height: 3.5px; }
+.track.sm { padding: 0 2px; }
+.track.sm .tline { top: 11.25px; height: 3.5px; inset-inline-start: calc(2px + (100% - 4px) / 8); inset-inline-end: calc(2px + (100% - 4px) / 8); }
 .track.sm .tn.is-now .nd { box-shadow: 0 0 0 3px rgba(235,210,142,.55), 0 0 12px rgba(191,155,82,.45); }
 .track.sm .tn.done .nd { box-shadow: 0 2px 6px rgba(191,155,82,.28); }
 
 .pg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-.pcard { background: var(--panel); border: 1px solid var(--frame); border-radius: 16px; padding: 14px 16px; min-height: 142px; box-shadow: 0 8px 22px rgba(31,30,28,.04), 0 1px 0 rgba(255,255,255,.9) inset; display: flex; flex-direction: column; gap: 12px; }
+.pcard { position: relative; background: var(--panel); border: 1px solid var(--frame); border-radius: 16px; padding: 14px 16px; min-height: 142px; box-shadow: 0 8px 22px rgba(31,30,28,.04), 0 1px 0 rgba(255,255,255,.9) inset; display: flex; flex-direction: column; gap: 12px; }
 .pcard:hover { border-color: #CDAE62; }
+.pcard-hit { position: absolute; inset: 0; z-index: 0; border-radius: inherit; }
+.pcard-top, .pcard .track { position: relative; z-index: 1; pointer-events: none; }
+.pcard .track a.tn { pointer-events: auto; }
 .pcard.new { background: linear-gradient(#FFFDF8, #FFFEFB); border: 1px dashed #CDAE62; box-shadow: none; align-items: center; justify-content: center; text-align: center; gap: 10px; }
 .plus { width: 44px; height: 44px; border-radius: 50%; background: #CDAE62; box-shadow: 0 4px 12px rgba(191,155,82,.28); display: flex; align-items: center; justify-content: center; }
 .pcard.new b { font-size: 15.5px; font-weight: 700; }

@@ -10,6 +10,10 @@
 @font-face { font-family: Vazirmatn; font-weight: 800; font-style: normal; font-display: swap; src: url('../fonts/Vazirmatn-Bold-latin.woff2') format('woff2'); unicode-range: U+0000-00FF; }
 
 :root {
+  --dur-out: 160ms;
+  --dur-in: 500ms;
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-in: cubic-bezier(.4, 0, 1, 1);
   --bg: #FAF8F4;
   --bg2: #F1EDE6;
   --surface: #FFFFFF;
@@ -34,6 +38,18 @@ button, input, select { font-family: inherit; }
 button { cursor: pointer; }
 img { max-width: 100%; display: block; }
 .num, .phone { direction: ltr; unicode-bidi: isolate; text-align: right; }
+@view-transition { navigation: auto; }
+.side { view-transition-name: gdl-side; }
+.main, .auth { view-transition-name: gdl-main; }
+::view-transition-old(gdl-main) { animation: gdl-out var(--dur-out) var(--ease-in) both; }
+::view-transition-new(gdl-main) { animation: gdl-in var(--dur-in) var(--ease-out) both; }
+@keyframes gdl-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes gdl-out { to { opacity: 0; } }
+.reveal { animation: gdl-in var(--dur-in) var(--ease-out) both; }
+html:active-view-transition .reveal { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal, ::view-transition-old(gdl-main), ::view-transition-new(gdl-main) { animation: none; }
+}
 .app { display: flex; min-height: 100vh; }
 .main { flex: 1; min-width: 0; background: var(--bg); }
 .main.dash { padding: 36px 44px 40px; }

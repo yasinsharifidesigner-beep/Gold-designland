@@ -14,13 +14,13 @@
   <% } else if (mode === 'signup2' || mode === 'forgot2') { %>
     <h2><%= mode === 'signup2' ? 'کد تأیید رو وارد کن' : 'با کد پیامکی وارد شو' %></h2>
     <% if (mode === 'signup2') { %><div class="step">۲ از ۴</div><% } %>
-    <div class="oknote">کد برای <b class="phone"><%= phoneShow %></b> ارسال شد</div>
+    <div class="oknote">کد برای <b class="phone"><%= typeof phoneShow === 'undefined' ? '' : phoneShow %></b> ارسال شد</div>
     <form method="post" action="<%= mode === 'signup2' ? '/auth/signup/verify' : '/auth/forgot/verify' %>">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
       <div class="otp" id="otp">
         <% for (let i = 0; i < 5; i++) { %><input name="d<%= i %>" inputmode="numeric" maxlength="1" class="<%= i === 4 ? 'on' : '' %>"><% } %>
       </div>
-      <div class="timer" id="timer" data-left="<%= left %>">ارسال دوباره تا <span class="num">۰:۵۸</span></div>
+      <div class="timer" id="timer" data-left="<%= typeof left === 'undefined' ? 58 : left %>">ارسال دوباره تا <span class="num">۰:۵۸</span></div>
       <button class="btn" type="submit"><%= mode === 'signup2' ? 'تأیید' : 'بزن بریم' %></button>
     </form>
     <a class="link" href="<%= mode === 'signup2' ? '/auth/signup' : '/auth/forgot' %>">اصلاح شماره</a>
@@ -30,12 +30,13 @@
     <div class="step">۳ از ۴</div>
     <form method="post" action="/auth/signup/profile">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
-      <input class="afield" name="first" placeholder="نام" value="<%= first || '' %>">
-      <input class="afield" name="last" placeholder="نام خانوادگی" value="<%= last || '' %>">
+      <input class="afield" name="first" placeholder="نام" value="<%= typeof first === 'undefined' ? '' : first %>">
+      <input class="afield" name="last" placeholder="نام خانوادگی" value="<%= typeof last === 'undefined' ? '' : last %>">
       <div class="datesel">
-        <label class="selbox"><span>روز</span><select name="d"><option value="">روز</option><% for (let i=1;i<=31;i++) { %><option value="<%= i %>"><%= fa(i) %></option><% } %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
-        <label class="selbox"><span>ماه</span><select name="m"><option value="">ماه</option><% months.forEach(function (m, i) { %><option value="<%= i+1 %>"><%= m %></option><% }) %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
-        <label class="selbox"><span>سال</span><select name="y"><option value="">سال</option><% for (let y=1405;y>=1320;y--) { %><option value="<%= y %>"><%= fa(y) %></option><% } %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
+        <% const pickedDay = typeof d === 'undefined' ? '' : String(d); const pickedMonth = typeof m === 'undefined' ? '' : String(m); const pickedYear = typeof y === 'undefined' ? '' : String(y); %>
+        <label class="selbox"><span>روز</span><select name="d"><option value="">روز</option><% for (let i=1;i<=31;i++) { %><option value="<%= i %>"<%= pickedDay === String(i) ? ' selected' : '' %>><%= fa(i) %></option><% } %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
+        <label class="selbox"><span>ماه</span><select name="m"><option value="">ماه</option><% months.forEach(function (name, i) { %><option value="<%= i+1 %>"<%= pickedMonth === String(i+1) ? ' selected' : '' %>><%= name %></option><% }) %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
+        <label class="selbox"><span>سال</span><select name="y"><option value="">سال</option><% for (let y=1405;y>=1320;y--) { %><option value="<%= y %>"<%= pickedYear === String(y) ? ' selected' : '' %>><%= fa(y) %></option><% } %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
       </div>
       <button class="btn" type="submit">ادامه</button>
     </form>

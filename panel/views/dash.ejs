@@ -1,23 +1,23 @@
-<%- include('partials/open', { active: 'میز کار', mainClass: 'dash', title: 'میز کار' }) %>
+<%- include('partials/open', { active: 'desk', mainClass: 'dash', title: t('dash.title') }) %>
 <header class="head">
-  <h1 class="h1">میز کار</h1>
-  <p class="sub"><%= user.firstName %> عزیز، <%= empty ? 'خوش اومدی. اولین طرحت از همین‌جا شروع می‌شه.' : 'کارهات اینجان.' %></p>
+  <h1 class="h1"><%= t('dash.title') %></h1>
+  <p class="sub"><%= empty ? t('dash.helloEmpty', { name: user.firstName }) : t('dash.helloWork', { name: user.firstName }) %></p>
 </header>
 <div class="grid3">
   <section class="w proj">
     <div class="wh">
       <span class="wi"><%- include('partials/ico', { name: 'grid' }) %></span>
-      <h2>پروژه‌های در جریان</h2>
-      <% if (!empty) { %><a class="more" href="/panel/projects">دیدن همه</a><% } %>
+      <h2><%= t('dash.projects') %></h2>
+      <% if (!empty) { %><a class="more" href="/panel/projects"><%= t('common.seeAll') %></a><% } %>
     </div>
     <% if (empty) { %>
       <div class="proj-empty">
         <span class="ill"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 4h10l4 5-9 11L3 9z"/><path d="M3 9h18M9.5 4 8 9l4 11 4-11-1.5-5"/></svg></span>
-        <p>هنوز پروژه‌ای نساختی. اولین طرحت رو با هم شروع کنیم.</p>
-        <a class="ebtn" href="/panel/chats/idea">شروع پروژهٔ جدید</a>
+        <p><%= t('dash.noProject') %></p>
+        <a class="ebtn" href="/panel/chats/idea"><%= t('dash.startProject') %></a>
       </div>
       <div class="path">
-        <div class="path-l">مسیر طرحت</div>
+        <div class="path-l"><%= t('dash.path') %></div>
         <%- include('partials/track', { now: 0, fill: '0%', small: false, links: null }) %>
       </div>
     <% } else { %>
@@ -32,28 +32,28 @@
     <% } %>
   </section>
   <section class="w">
-    <div class="wh"><span class="wi"><%- include('partials/ico', { name: 'lamp' }) %></span><h2>ایده‌های اخیر</h2><% if (!empty) { %><a class="more" href="/panel/chats/idea">دیدن همه</a><% } %></div>
+    <div class="wh"><span class="wi"><%- include('partials/ico', { name: 'lamp' }) %></span><h2><%= t('dash.ideas') %></h2><% if (!empty) { %><a class="more" href="/panel/chats/idea"><%= t('common.seeAll') %></a><% } %></div>
     <% if (empty) { %>
-      <div class="empty"><p>ایده‌ای در ذهن داری؟ بیا با هم پرورده‌اش کنیم.</p><a class="ebtn" href="/panel/chats/idea">شروع ایده‌پردازی</a></div>
+      <div class="empty"><p><%= t('dash.noIdea') %></p><a class="ebtn" href="/panel/chats/idea"><%= t('dash.startIdea') %></a></div>
     <% } else { %>
       <div class="list"><% ideas.forEach(function (c) { %><a class="row" href="/panel/chats/idea/<%= c.id %>"><span class="rt"><%= c.title %></span><span class="rm"><%= c.when %></span></a><% }) %></div>
     <% } %>
   </section>
   <section class="w">
-    <div class="wh"><span class="wi"><%- include('partials/ico', { name: 'box' }) %></span><h2>سؤال‌های اخیر طراحیار</h2><% if (!empty) { %><a class="more" href="/panel/chats/assistant">دیدن همه</a><% } %></div>
+    <div class="wh"><span class="wi"><%- include('partials/ico', { name: 'box' }) %></span><h2><%= t('dash.asks') %></h2><% if (!empty) { %><a class="more" href="/panel/chats/assistant"><%= t('common.seeAll') %></a><% } %></div>
     <% if (empty) { %>
-      <%- include('partials/ring', { num: fa(giftLeft), label: 'از ' + fa(user.giftTotal) + ' پیام هدیه باقی مانده', offset: 0, big: false }) %>
-      <div class="empty"><p>هر جای مدل‌سازی که گیر کردی، طراحیار کنارته.</p><a class="ebtn" href="/panel/chats/assistant">پرسیدن اولین سؤال</a></div>
+      <%- include('partials/ring', { num: fa(giftLeft), label: t('dash.gift', { total: fa(user.giftTotal) }), offset: 0, big: false }) %>
+      <div class="empty"><p><%= t('dash.noAsk') %></p><a class="ebtn" href="/panel/chats/assistant"><%= t('dash.firstAsk') %></a></div>
     <% } else { %>
-      <div class="usage"><div class="ubar"><i style="width:<%= Math.round((user.giftTotal - giftLeft) / user.giftTotal * 100) %>%"></i></div><span><%= fa(giftLeft) %> از <%= fa(user.giftTotal) %> پیام هدیه باقی مانده</span></div>
+      <div class="usage"><div class="ubar"><i style="width:<%= user.giftTotal ? Math.round((user.giftTotal - giftLeft) / user.giftTotal * 100) : 0 %>%"></i></div><span><%= fa(giftLeft) %> <%= t('dash.gift', { total: fa(user.giftTotal) }) %></span></div>
       <div class="list"><% asks.forEach(function (c) { %><a class="row" href="/panel/chats/assistant/<%= c.id %>"><span class="rt"><%= c.title %></span><span class="rm"><%= c.when %></span></a><% }) %></div>
     <% } %>
   </section>
   <section class="w">
-    <div class="wh"><span class="wi"><%- include('partials/ico', { name: 'cam' }) %></span><h2>عکس‌های ساخته‌شده</h2><% if (!empty) { %><a class="more" href="/panel/chats/image">دیدن همه</a><% } %></div>
+    <div class="wh"><span class="wi"><%- include('partials/ico', { name: 'cam' }) %></span><h2><%= t('dash.shots') %></h2><% if (!empty) { %><a class="more" href="/panel/chats/image"><%= t('common.seeAll') %></a><% } %></div>
     <% if (empty) { %>
       <div class="tiles"><% for (let i=0;i<4;i++) { %><div class="sg"></div><% } %>
-        <div class="imgs-cta"><p>اولین عکس محصولت رو بساز.</p><a class="ebtn" href="/panel/chats/image">ساخت تصویر</a></div>
+        <div class="imgs-cta"><p><%= t('dash.noShot') %></p><a class="ebtn" href="/panel/chats/image"><%= t('nav.image') %></a></div>
       </div>
     <% } else { %>
       <div class="shots"><% shots.forEach(function (s) { %><a class="shot" href="/panel/chats/image/<%= s.chatId %>"><%- include('partials/sketch', { shape: 'ring' }) %></a><% }) %></div>

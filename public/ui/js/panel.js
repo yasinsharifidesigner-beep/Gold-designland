@@ -104,7 +104,7 @@
         if (left <= 0) {
           clearInterval(timerId);
           timerId = null;
-          timer.innerHTML = '<a href="' + location.pathname + '?resend=1">ارسال دوبارهٔ کد</a>';
+          timer.innerHTML = '<a href="' + location.pathname + '?resend=1">' + (timer.getAttribute('data-resend') || '') + '</a>';
           return;
         }
         var m = Math.floor(left / 60);

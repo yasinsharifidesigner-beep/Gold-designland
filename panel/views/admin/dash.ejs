@@ -1,0 +1,21 @@
+<%- include('open', { bare: false, active: 'dash', title: 'داشبورد' }) %>
+<header class="head"><h1 class="h1s">داشبورد</h1><p class="sub">خلاصهٔ کاربرها، اشتراک‌ها و خریدها.</p></header>
+<div class="stats">
+  <div class="stat"><span>کاربرها</span><b class="num"><%= fa(counts.users) %></b></div>
+  <div class="stat"><span>کاربر جدید این هفته</span><b class="num"><%= fa(counts.week) %></b></div>
+  <div class="stat"><span>اشتراک فعال</span><b class="num"><%= fa(counts.subs) %></b></div>
+  <div class="stat"><span>خریدها</span><b class="num"><%= fa(counts.purchases) %></b></div>
+</div>
+<section class="section">
+  <h2>آخرین فعالیت‌ها</h2>
+  <% if (!activity.length) { %><p class="empty-note">هنوز فعالیتی ثبت نشده.</p><% } %>
+  <div class="timeline">
+    <% activity.forEach(function (row) { %>
+      <div class="ev">
+        <div><%= row.summary %></div>
+        <small class="num"><%= when(row.created_at) %><% if (row.first_name) { %> — <%= row.first_name %> <%= row.last_name %><% } %></small>
+      </div>
+    <% }) %>
+  </div>
+</section>
+<%- include('close', { bare: false }) %>

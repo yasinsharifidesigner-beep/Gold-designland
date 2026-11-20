@@ -1,0 +1,32 @@
+<%- include('open', { bare: false, active: 'purchases', title: row ? 'خرید' : 'خرید دستی' }) %>
+<header class="head"><h1 class="h1s"><%= row ? 'خرید' : 'خرید دستی' %></h1></header>
+<% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+<section class="section">
+  <form method="post" action="<%= row ? '/admin/purchases/' + row.id : '/admin/purchases' %>">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="formgrid">
+      <label class="admin-field"><span>شمارهٔ موبایل</span><input class="num" name="phone" value="<%= phone || '' %>" <%= row ? 'readonly' : '' %>></label>
+      <label class="admin-field"><span>اشتراک</span>
+        <select name="plan">
+          <option value="">بدون طرح</option>
+          <% plans.forEach(function (p) { %>
+            <option value="<%= p.code %>" <%= planCode === p.code ? 'selected' : '' %>><%= p.name %></option>
+          <% }) %>
+        </select>
+      </label>
+      <label class="admin-field"><span>مبلغ (تومان)</span><input class="num" name="amount" value="<%= amount %>"></label>
+      <label class="admin-field"><span>تخفیف</span><input class="num" name="discount" value="<%= discount || 0 %>"></label>
+      <label class="admin-field"><span>وضعیت</span>
+        <select name="status">
+          <% [['paid','پرداخت‌شده'],['manual','دستی'],['failed','ناموفق']].forEach(function (s) { %>
+            <option value="<%= s[0] %>" <%= status === s[0] ? 'selected' : '' %>><%= s[1] %></option>
+          <% }) %>
+        </select>
+      </label>
+      <label class="checkline"><input type="checkbox" name="grant" value="1" <%= grant ? 'checked' : '' %>> <span>این طرح را برای کاربر فعال کن</span></label>
+      <label class="admin-field full"><span>یادداشت</span><textarea name="note"><%= memo || '' %></textarea></label>
+    </div>
+    <div class="actions"><button class="btn" type="submit">ذخیره</button></div>
+  </form>
+</section>
+<%- include('close', { bare: false }) %>

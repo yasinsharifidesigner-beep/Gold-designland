@@ -1,0 +1,33 @@
+<%- include('open', { bare: false, active: 'courses', title: lesson ? lesson.title : 'جلسهٔ جدید' }) %>
+<header class="head"><h1 class="h1s"><%= lesson ? lesson.title : 'جلسهٔ جدید' %></h1><p class="sub"><a class="rowlink" href="/admin/courses/<%= course.id %>"><%= course.title %></a></p></header>
+<% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+<section class="section">
+  <form method="post" action="<%= lesson ? '/admin/courses/' + course.id + '/lessons/' + lesson.id : '/admin/courses/' + course.id + '/lessons' %>">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="formgrid">
+      <label class="admin-field"><span>عنوان</span><input name="title" value="<%= lesson ? lesson.title : '' %>"></label>
+      <label class="admin-field"><span>شماره</span><input class="num" name="n" value="<%= lesson ? lesson.n : nextN %>"></label>
+      <label class="admin-field"><span>ترتیب</span><input class="num" name="sort" value="<%= lesson ? lesson.sort : nextN %>"></label>
+      <label class="admin-field"><span>مدت</span><input name="duration" value="<%= lesson ? lesson.duration : '' %>"></label>
+      <label class="admin-field full"><span>نشانی ویدیو</span><input name="video_url" value="<%= lesson ? lesson.videoUrl : '' %>"></label>
+      <label class="admin-field"><span>دسترسی</span>
+        <select name="access">
+          <% [['free','رایگان'],['gift','هدیه'],['locked','قفل']].forEach(function (a) { %>
+            <option value="<%= a[0] %>" <%= lesson && lesson.access === a[0] ? 'selected' : '' %>><%= a[1] %></option>
+          <% }) %>
+        </select>
+      </label>
+      <label class="admin-field full"><span>توضیح</span><textarea name="description"><%= lesson ? lesson.description : '' %></textarea></label>
+    </div>
+    <div class="actions"><button class="btn" type="submit">ذخیره</button></div>
+  </form>
+</section>
+<% if (lesson) { %>
+<section class="section">
+  <form method="post" action="/admin/courses/<%= course.id %>/lessons/<%= lesson.id %>/delete">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <button class="danger" type="submit">حذف جلسه</button>
+  </form>
+</section>
+<% } %>
+<%- include('close', { bare: false }) %>

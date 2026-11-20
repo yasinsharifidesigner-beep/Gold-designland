@@ -1,0 +1,19 @@
+<%- include('open', { bare: false, active: 'courses', title: 'دوره‌ها' }) %>
+<header class="head"><h1 class="h1s">دوره‌ها</h1></header>
+<div class="toolsbar"><a class="btn" href="/admin/courses/new">دورهٔ جدید</a></div>
+<div class="table-wrap">
+  <table class="atable">
+    <thead><tr><th>عنوان</th><th>جلسه‌ها</th><th>وضعیت</th></tr></thead>
+    <tbody>
+      <% rows.forEach(function (c) { %>
+        <tr>
+          <td><a class="rowlink" href="/admin/courses/<%= c.id %>"><%= c.title %></a></td>
+          <td class="num"><%= fa(c.sessions.length) %></td>
+          <td><% if (c.active) { %><span class="badge">فعال</span><% } else { %><span class="badge off">خاموش</span><% } %></td>
+        </tr>
+      <% }) %>
+      <% if (!rows.length) { %><tr><td colspan="3">دوره‌ای نیست.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('close', { bare: false }) %>

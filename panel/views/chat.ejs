@@ -35,28 +35,28 @@
         <form method="post" action="<%= action %>">
           <input type="hidden" name="_csrf" value="<%= csrf %>">
           <input type="hidden" name="confirm" value="1">
-          <button class="btn form go" type="submit">تأیید و دیدن طرح‌ها</button>
+          <button class="btn form go" type="submit"><%= t('common.confirmDesigns') %></button>
         </form>
       <% } %>
       <% if (card.build) { %>
         <form method="post" action="<%= action %>">
           <input type="hidden" name="_csrf" value="<%= csrf %>">
           <input type="hidden" name="build" value="1">
-          <button class="btn form go" type="submit">بساز</button>
+          <button class="btn form go" type="submit"><%= t('common.build') %></button>
         </form>
       <% } %>
       <% if (card.progress) { %>
-        <div class="prog"><span>مرحلهٔ <%= card.progress.label %></span><b><i style="width:<%= card.progress.pct %>"></i></b></div>
+        <div class="prog"><span><%= t('common.stageOf', { label: card.progress.label }) %></span><b><i style="width:<%= card.progress.pct %>"></i></b></div>
       <% } %>
     </section>
   <% } %>
-  <% if (typing) { %><div class="typing">در حال نوشتن…</div><% } %>
+  <% if (typing) { %><div class="typing"><%= t('common.typing') %></div><% } %>
   <% if (error) { %><p class="err"><%= error %></p><% } %>
 </div>
 <form class="composer w760" method="post" action="<%= action %>">
   <input type="hidden" name="_csrf" value="<%= csrf %>">
   <input type="text" name="text" placeholder="<%= placeholder %>" aria-label="<%= placeholder %>">
-  <button class="attach" type="button" title="پیوست تصویر مرجع" aria-label="پیوست تصویر مرجع"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="5" width="17" height="14" rx="2.2"/><circle cx="9" cy="10.2" r="1.6"/><path d="M3.8 16.2 8.5 12l3.2 2.6 3-3.4 5.5 5.2"/></svg></button>
-  <button class="send" type="submit" title="ارسال" aria-label="ارسال"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></button>
+  <button class="attach" type="button" title="<%= t('common.attach') %>" aria-label="<%= t('common.attach') %>"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="5" width="17" height="14" rx="2.2"/><circle cx="9" cy="10.2" r="1.6"/><path d="M3.8 16.2 8.5 12l3.2 2.6 3-3.4 5.5 5.2"/></svg></button>
+  <button class="send" type="submit" title="<%= t('common.send') %>" aria-label="<%= t('common.send') %>"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></button>
 </form>
 <%- include('partials/close', { auth: false }) %>

@@ -1,72 +1,72 @@
-<%- include('partials/open', { auth: true, title: 'ورود', csrf }) %>
+<%- include('partials/open', { auth: true, title: t('auth.loginTitle'), csrf }) %>
 <article class="card">
   <div class="logo"></div>
-  <div class="brand">گولد دیزاین لند</div>
+  <div class="brand"><%= t('common.brand') %></div>
   <% if (mode === 'signup1') { %>
-    <h2>شماره موبایلت رو وارد کن</h2>
-    <div class="step">۱ از ۴</div>
+    <h2><%= t('auth.signupPhoneTitle') %></h2>
+    <div class="step"><%= t('auth.step', { n: fa(1) }) %></div>
     <form method="post" action="/auth/signup">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
-      <input class="afield phone" name="phone" inputmode="numeric" placeholder="شماره موبایل" value="<%= phone || '' %>">
-      <button class="btn" type="submit">ارسال کد</button>
+      <input class="afield phone" name="phone" inputmode="numeric" placeholder="<%= t('auth.phonePh') %>" value="<%= phone || '' %>">
+      <button class="btn" type="submit"><%= t('auth.sendCode') %></button>
     </form>
-    <a class="sublink" href="/auth/login">حساب داری؟ وارد شو</a>
+    <a class="sublink" href="/auth/login"><%= t('auth.haveAccount') %></a>
   <% } else if (mode === 'signup2' || mode === 'forgot2') { %>
-    <h2><%= mode === 'signup2' ? 'کد تأیید رو وارد کن' : 'با کد پیامکی وارد شو' %></h2>
-    <% if (mode === 'signup2') { %><div class="step">۲ از ۴</div><% } %>
-    <div class="oknote">کد برای <b class="phone"><%= typeof phoneShow === 'undefined' ? '' : phoneShow %></b> ارسال شد</div>
+    <h2><%= mode === 'signup2' ? t('auth.codeTitle') : t('auth.otpTitle') %></h2>
+    <% if (mode === 'signup2') { %><div class="step"><%= t('auth.step', { n: fa(2) }) %></div><% } %>
+    <div class="oknote"><%= t('auth.codeFor') %> <b class="phone"><%= typeof phoneShow === 'undefined' ? '' : phoneShow %></b> <%= t('auth.codeSentTail') %></div>
     <form method="post" action="<%= mode === 'signup2' ? '/auth/signup/verify' : '/auth/forgot/verify' %>">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
       <div class="otp" id="otp">
         <% for (let i = 0; i < 5; i++) { %><input name="d<%= i %>" inputmode="numeric" maxlength="1" class="<%= i === 4 ? 'on' : '' %>"><% } %>
       </div>
-      <div class="timer" id="timer" data-left="<%= typeof left === 'undefined' ? 58 : left %>">ارسال دوباره تا <span class="num">۰:۵۸</span></div>
-      <button class="btn" type="submit"><%= mode === 'signup2' ? 'تأیید' : 'بزن بریم' %></button>
+      <div class="timer" id="timer" data-left="<%= typeof left === 'undefined' ? 58 : left %>" data-resend="<%= t('auth.resend') %>"><%= t('auth.resendIn') %> <span class="num">۰:۵۸</span></div>
+      <button class="btn" type="submit"><%= mode === 'signup2' ? t('auth.confirm') : t('auth.go') %></button>
     </form>
-    <a class="link" href="<%= mode === 'signup2' ? '/auth/signup' : '/auth/forgot' %>">اصلاح شماره</a>
-    <% if (mode === 'forgot2') { %><a class="sublink" href="/auth/login">برگشت به ورود با رمز</a><% } %>
+    <a class="link" href="<%= mode === 'signup2' ? '/auth/signup' : '/auth/forgot' %>"><%= t('auth.fixPhone') %></a>
+    <% if (mode === 'forgot2') { %><a class="sublink" href="/auth/login"><%= t('auth.backPassword') %></a><% } %>
   <% } else if (mode === 'signup3') { %>
-    <h2>مشخصات رو وارد کن</h2>
-    <div class="step">۳ از ۴</div>
+    <h2><%= t('auth.profileTitle') %></h2>
+    <div class="step"><%= t('auth.step', { n: fa(3) }) %></div>
     <form method="post" action="/auth/signup/profile">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
-      <input class="afield" name="first" placeholder="نام" value="<%= typeof first === 'undefined' ? '' : first %>">
-      <input class="afield" name="last" placeholder="نام خانوادگی" value="<%= typeof last === 'undefined' ? '' : last %>">
+      <input class="afield" name="first" placeholder="<%= t('auth.firstPh') %>" value="<%= typeof first === 'undefined' ? '' : first %>">
+      <input class="afield" name="last" placeholder="<%= t('auth.lastPh') %>" value="<%= typeof last === 'undefined' ? '' : last %>">
       <div class="datesel">
         <% const pickedDay = typeof d === 'undefined' ? '' : String(d); const pickedMonth = typeof m === 'undefined' ? '' : String(m); const pickedYear = typeof y === 'undefined' ? '' : String(y); %>
-        <label class="selbox"><span>روز</span><select name="d"><option value="">روز</option><% for (let i=1;i<=31;i++) { %><option value="<%= i %>"<%= pickedDay === String(i) ? ' selected' : '' %>><%= fa(i) %></option><% } %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
-        <label class="selbox"><span>ماه</span><select name="m"><option value="">ماه</option><% months.forEach(function (name, i) { %><option value="<%= i+1 %>"<%= pickedMonth === String(i+1) ? ' selected' : '' %>><%= name %></option><% }) %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
-        <label class="selbox"><span>سال</span><select name="y"><option value="">سال</option><% for (let y=1405;y>=1320;y--) { %><option value="<%= y %>"<%= pickedYear === String(y) ? ' selected' : '' %>><%= fa(y) %></option><% } %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
+        <label class="selbox"><span><%= t('auth.day') %></span><select name="d"><option value=""><%= t('auth.day') %></option><% for (let i=1;i<=31;i++) { %><option value="<%= i %>"<%= pickedDay === String(i) ? ' selected' : '' %>><%= fa(i) %></option><% } %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
+        <label class="selbox"><span><%= t('auth.month') %></span><select name="m"><option value=""><%= t('auth.month') %></option><% months.forEach(function (name, i) { %><option value="<%= i+1 %>"<%= pickedMonth === String(i+1) ? ' selected' : '' %>><%= name %></option><% }) %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
+        <label class="selbox"><span><%= t('auth.year') %></span><select name="y"><option value=""><%= t('auth.year') %></option><% for (let y=1405;y>=1320;y--) { %><option value="<%= y %>"<%= pickedYear === String(y) ? ' selected' : '' %>><%= fa(y) %></option><% } %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
       </div>
-      <button class="btn" type="submit">ادامه</button>
+      <button class="btn" type="submit"><%= t('auth.next') %></button>
     </form>
   <% } else if (mode === 'signup4') { %>
-    <h2>رمز عبور خودت رو انتخاب کن</h2>
-    <div class="step">۴ از ۴</div>
+    <h2><%= t('auth.passTitle') %></h2>
+    <div class="step"><%= t('auth.step', { n: fa(4) }) %></div>
     <form method="post" action="/auth/signup/password">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
-      <input class="afield" type="password" name="password" placeholder="رمز عبور">
-      <input class="afield" type="password" name="again" placeholder="تکرار رمز عبور">
-      <button class="btn" type="submit">بزن بریم</button>
+      <input class="afield" type="password" name="password" placeholder="<%= t('auth.passPh') %>">
+      <input class="afield" type="password" name="again" placeholder="<%= t('auth.againPh') %>">
+      <button class="btn" type="submit"><%= t('auth.go') %></button>
     </form>
   <% } else if (mode === 'login') { %>
-    <h2>به حساب کاربریت وارد شو</h2>
+    <h2><%= t('auth.loginH') %></h2>
     <form method="post" action="/auth/login" style="margin-top:10px">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
-      <input class="afield phone" name="phone" inputmode="numeric" placeholder="شماره موبایل" value="<%= phone || '' %>">
-      <input class="afield" type="password" name="password" placeholder="رمز عبور">
-      <button class="btn" type="submit">بزن بریم</button>
+      <input class="afield phone" name="phone" inputmode="numeric" placeholder="<%= t('auth.phonePh') %>" value="<%= phone || '' %>">
+      <input class="afield" type="password" name="password" placeholder="<%= t('auth.passPh') %>">
+      <button class="btn" type="submit"><%= t('auth.go') %></button>
     </form>
-    <a class="link" href="/auth/forgot">رمزم رو فراموش کردم</a>
-    <a class="sublink" href="/auth/signup">حساب نداری؟ ثبت‌نام کن</a>
+    <a class="link" href="/auth/forgot"><%= t('auth.forgot') %></a>
+    <a class="sublink" href="/auth/signup"><%= t('auth.noAccount') %></a>
   <% } else { %>
-    <h2>با کد پیامکی وارد شو</h2>
+    <h2><%= t('auth.otpTitle') %></h2>
     <form method="post" action="/auth/forgot" style="margin-top:10px">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
-      <input class="afield phone" name="phone" inputmode="numeric" placeholder="شماره موبایل" value="<%= phone || '' %>">
-      <button class="btn" type="submit">ارسال کد</button>
+      <input class="afield phone" name="phone" inputmode="numeric" placeholder="<%= t('auth.phonePh') %>" value="<%= phone || '' %>">
+      <button class="btn" type="submit"><%= t('auth.sendCode') %></button>
     </form>
-    <a class="sublink" href="/auth/login">برگشت به ورود با رمز</a>
+    <a class="sublink" href="/auth/login"><%= t('auth.backPassword') %></a>
   <% } %>
   <% if (error) { %><p class="err"><%= error %></p><% } %>
 </article>

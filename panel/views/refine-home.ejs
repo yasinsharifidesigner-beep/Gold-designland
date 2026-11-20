@@ -1,13 +1,13 @@
-<%- include('partials/open', { active: 'اصلاح و انتخاب طرح', mainClass: 'dash', title: 'اصلاح و انتخاب طرح' }) %>
+<%- include('partials/open', { active: 'refine', mainClass: 'dash', title: t('nav.refine') }) %>
 <header class="head gap">
-  <h1 class="h1s">اصلاح و انتخاب طرح</h1>
-  <p class="sub">طرح‌هایی که تا حالا اصلاح و انتخاب کردی، و پروژه‌هایی که هنوز در این مرحله‌اند.</p>
+  <h1 class="h1s"><%= t('nav.refine') %></h1>
+  <p class="sub"><%= t('refine.sub') %></p>
 </header>
 <% if (!pending.length && !picked.length) { %>
-  <p class="sub">هنوز طرحی برای اصلاح و انتخاب نداری.</p>
+  <p class="sub"><%= t('refine.empty') %></p>
 <% } %>
 <% if (pending.length) { %>
-  <h2 class="group-t">هنوز در این مرحله</h2>
+  <h2 class="group-t"><%= t('refine.pending') %></h2>
   <div class="pg">
     <% pending.forEach(function (p) { %>
       <article class="pcard">
@@ -19,7 +19,7 @@
   </div>
 <% } %>
 <% if (picked.length) { %>
-  <h2 class="group-t">طرح‌های انتخاب‌شده</h2>
+  <h2 class="group-t"><%= t('refine.picked') %></h2>
   <div class="pg">
     <% picked.forEach(function (p) { %>
       <article class="pcard">

@@ -1,0 +1,26 @@
+<%- include('open', { bare: false, active: 'questions', title: 'اصلاح و انتخاب طرح' }) %>
+<header class="head"><h1 class="h1s">اصلاح و انتخاب طرح</h1><p class="sub">سؤال‌ها و گزینه‌ها را بدون تغییر کد عوض کن.</p></header>
+<div class="tabs-mini">
+  <% flows.forEach(function (f) { %>
+    <a class="<%= f.on ? 'on' : '' %>" href="/admin/questions?flow=<%= f.id %>"><%= f.label %></a>
+  <% }) %>
+</div>
+<div class="toolsbar"><a class="btn" href="/admin/questions/new?flow=<%= flow %>">سؤال جدید</a></div>
+<% rows.forEach(function (q, i) { %>
+  <section class="section">
+    <div class="checkline" style="justify-content:space-between">
+      <a class="rowlink" href="/admin/questions/<%= q.id %>"><%= fa(i + 1) %>. <%= q.title %></a>
+      <span>
+        <% if (!q.active) { %><span class="badge off">خاموش</span><% } %>
+        <form method="post" action="/admin/questions/<%= q.id %>/move" style="display:inline">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button class="btn-sec" name="dir" value="up" type="submit">بالا</button>
+          <button class="btn-sec" name="dir" value="down" type="submit">پایین</button>
+        </form>
+      </span>
+    </div>
+    <p class="empty-note"><%= q.options.map(function (o) { return o.text; }).join(' · ') %></p>
+  </section>
+<% }) %>
+<% if (!rows.length) { %><p class="empty-note">سؤالی در این بخش نیست.</p><% } %>
+<%- include('close', { bare: false }) %>

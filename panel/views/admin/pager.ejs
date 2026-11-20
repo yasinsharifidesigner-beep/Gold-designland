@@ -1,0 +1,7 @@
+<% if (pages > 1) { %>
+<nav class="pager">
+  <% if (page > 1) { %><a class="btn-sec" href="<%= pageHref(page - 1) %>">قبلی</a><% } %>
+  <span class="num"><%= fa(page) %> / <%= fa(pages) %></span>
+  <% if (page < pages) { %><a class="btn-sec" href="<%= pageHref(page + 1) %>">بعدی</a><% } %>
+</nav>
+<% } %>

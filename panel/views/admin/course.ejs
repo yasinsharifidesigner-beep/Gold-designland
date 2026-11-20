@@ -1,0 +1,53 @@
+<%- include('open', { bare: false, active: 'courses', title: course ? course.title : 'دورهٔ جدید' }) %>
+<header class="head"><h1 class="h1s"><%= course ? course.title : 'دورهٔ جدید' %></h1></header>
+<% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+<section class="section">
+  <form method="post" action="<%= course ? '/admin/courses/' + course.id : '/admin/courses' %>">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="formgrid">
+      <label class="admin-field"><span>عنوان</span><input name="title" value="<%= course ? course.title : '' %>"></label>
+      <label class="admin-field"><span>شناسه (لاتین)</span><input name="slug" value="<%= course ? course.slug : '' %>" <%= course ? 'readonly' : '' %>></label>
+      <label class="admin-field"><span>ترتیب</span><input class="num" name="sort" value="<%= course ? course.sort : '' %>"></label>
+      <label class="checkline"><input type="checkbox" name="active" value="1" <%= !course || course.active ? 'checked' : '' %>> <span>فعال</span></label>
+      <label class="admin-field full"><span>توضیح</span><textarea name="description"><%= course ? course.description : '' %></textarea></label>
+    </div>
+    <div class="actions"><button class="btn" type="submit">ذخیره</button></div>
+  </form>
+</section>
+<% if (course) { %>
+<section class="section">
+  <h2>جلسه‌ها</h2>
+  <% course.sessions.forEach(function (s) { %>
+    <div class="checkline">
+      <a class="rowlink" href="/admin/courses/<%= course.id %>/lessons/<%= s.id %>"><%= fa(s.n) %>. <%= s.title %></a>
+      <span class="badge"><%= s.access === 'free' ? 'رایگان' : (s.access === 'locked' ? 'قفل' : 'هدیه') %></span>
+      <form method="post" action="/admin/courses/<%= course.id %>/lessons/<%= s.id %>/move">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button class="btn-sec" name="dir" value="up" type="submit">بالا</button>
+        <button class="btn-sec" name="dir" value="down" type="submit">پایین</button>
+      </form>
+    </div>
+  <% }) %>
+  <a class="btn" href="/admin/courses/<%= course.id %>/lessons/new" style="margin-top:12px">جلسهٔ جدید</a>
+</section>
+<section class="section">
+  <h2>دسترسی یک کاربر</h2>
+  <form method="post" action="/admin/courses/<%= course.id %>/grant">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="formgrid">
+      <label class="admin-field"><span>شمارهٔ موبایل</span><input class="num" name="phone" placeholder="۰۹۱۲…"></label>
+      <label class="admin-field"><span>کار</span>
+        <select name="mode"><option value="grant">دادن دسترسی</option><option value="revoke">گرفتن دسترسی</option></select>
+      </label>
+    </div>
+    <div class="actions"><button class="btn" type="submit">ثبت</button></div>
+  </form>
+</section>
+<section class="section">
+  <form method="post" action="/admin/courses/<%= course.id %>/delete">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <button class="danger" type="submit">حذف دوره</button>
+  </form>
+</section>
+<% } %>
+<%- include('close', { bare: false }) %>

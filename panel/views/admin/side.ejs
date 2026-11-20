@@ -1,0 +1,37 @@
+<div class="side-backdrop" id="side-backdrop" hidden></div>
+<div class="drawer" id="drawer">
+<aside class="side compact" id="side">
+  <a class="brand" href="/admin">GDL</a>
+  <div class="user"><b>مدیریت</b></div>
+  <nav class="nav">
+    <% const items = [
+      ['dash','داشبورد','/admin'],
+      ['users','کاربرها','/admin/users'],
+      ['projects','پروژه‌ها','/admin/projects'],
+      ['ideas','ایده‌ها','/admin/ideas'],
+      ['chats','گفت‌وگوها','/admin/chats'],
+      ['plans','اشتراک‌ها','/admin/plans'],
+      ['purchases','خریدها','/admin/purchases'],
+      ['courses','دوره‌ها','/admin/courses'],
+      ['questions','اصلاح و انتخاب طرح','/admin/questions'],
+      ['texts','متن‌های سایت','/admin/texts']
+    ]; %>
+    <% items.forEach(function (it) { %>
+      <a class="<%= active === it[0] ? 'on' : '' %>" href="<%= it[2] %>"><span><%= it[1] %></span></a>
+    <% }) %>
+  </nav>
+  <div class="foot">
+    <button class="tog" type="button" data-theme-toggle title="ظاهر" aria-label="ظاهر">
+      <svg class="ico-moon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"/></svg>
+      <svg class="ico-sun" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M4.9 4.9l1.5 1.5M17.6 17.6l1.5 1.5M3 12h2M19 12h2M4.9 19.1l1.5-1.5M17.6 6.4l1.5-1.5"/></svg>
+    </button>
+    <form method="post" action="/admin/logout" style="margin-inline-start:8px">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <button class="btn-sec" type="submit">خروج</button>
+    </form>
+  </div>
+</aside>
+</div>
+<button class="menu-btn" type="button" id="menu-btn" aria-label="منو" aria-controls="side" aria-expanded="false">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+</button>

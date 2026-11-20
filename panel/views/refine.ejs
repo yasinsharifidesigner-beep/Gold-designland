@@ -1,7 +1,7 @@
-<%- include('partials/open', { active: 'اصلاح و انتخاب طرح', mainClass: 'talk', title: 'اصلاح و انتخاب طرح' }) %>
+<%- include('partials/open', { active: 'refine', mainClass: 'talk', title: t('nav.refine') }) %>
 <header class="cbar">
-  <a class="back" href="<%= back %>"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg>ایده‌پردازی</a>
-  <h1>اصلاح و انتخاب طرح</h1>
+  <a class="back" href="<%= back %>"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5l7 7-7 7"/></svg><%= t('nav.idea') %></a>
+  <h1><%= t('nav.refine') %></h1>
   <span class="cbar-sp"></span>
 </header>
 <div class="thread tight">
@@ -10,15 +10,15 @@
   <% }) %>
   <div class="tools">
     <div class="r">
-      <a class="tbtn pri" href="/panel/chats/assistant/<%= assistId %>">ادامه با طراحیار</a>
-      <a class="tbtn" href="/panel/chats/image/<%= imageId %>">ساخت عکس</a>
+      <a class="tbtn pri" href="/panel/chats/assistant/<%= assistId %>"><%= t('assistant.continue') %></a>
+      <a class="tbtn" href="/panel/chats/image/<%= imageId %>"><%= t('image.make') %></a>
     </div>
     <div class="l">
-      <a class="ib" href="/panel/projects/<%= project.slug %>/download" title="دانلود" aria-label="دانلود"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg></a>
-      <button class="ib" type="button" id="share" data-link="<%= share %>" title="اشتراک‌گذاری" aria-label="اشتراک‌گذاری"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="12" r="2"/><circle cx="16" cy="7" r="2"/><circle cx="16" cy="17" r="2"/><path d="M8 11l6-3M8 13l6 3"/></svg></button>
+      <a class="ib" href="/panel/projects/<%= project.slug %>/download" title="<%= t('common.download') %>" aria-label="<%= t('common.download') %>"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg></a>
+      <button class="ib" type="button" id="share" data-link="<%= share %>" title="<%= t('common.share') %>" aria-label="<%= t('common.share') %>"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="12" r="2"/><circle cx="16" cy="7" r="2"/><circle cx="16" cy="17" r="2"/><path d="M8 11l6-3M8 13l6 3"/></svg></button>
       <form method="post" action="/panel/projects/<%= project.slug %>/more" style="display:inline">
         <input type="hidden" name="_csrf" value="<%= csrf %>">
-        <button class="ib" type="submit" title="ساخت نمونه‌های دیگر" aria-label="ساخت نمونه‌های دیگر"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12a8 8 0 0 1 13-6l3 3M20 12a8 8 0 0 1-13 6l-3-3"/><path d="M20 4v5h-5M4 20v-5h5"/></svg></button>
+        <button class="ib" type="submit" title="<%= t('common.moreSamples') %>" aria-label="<%= t('common.moreSamples') %>"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12a8 8 0 0 1 13-6l3 3M20 12a8 8 0 0 1-13 6l-3-3"/><path d="M20 4v5h-5M4 20v-5h5"/></svg></button>
       </form>
     </div>
   </div>
@@ -29,7 +29,7 @@
         <input type="hidden" name="n" value="<%= d.number %>">
         <button class="tile <%= d.selected ? 'on' : '' %>" type="submit">
           <span class="n"><%= fa(d.number) %></span>
-          <% if (d.selected) { %><span class="picked">انتخاب‌شده</span><% } %>
+          <% if (d.selected) { %><span class="picked"><%= t('common.selected') %></span><% } %>
           <%- include('partials/sketch', { shape: 'ring' }) %>
         </button>
       </form>
@@ -38,9 +38,9 @@
 </div>
 <form class="composer w760" method="post" action="/panel/projects/<%= project.slug %>/refine">
   <input type="hidden" name="_csrf" value="<%= csrf %>">
-  <input type="text" name="text" placeholder="یا هر چی در ذهنت هست رو بنویس…" aria-label="یا هر چی در ذهنت هست رو بنویس…">
-  <button class="attach" type="button" title="پیوست تصویر مرجع" aria-label="پیوست تصویر مرجع"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="5" width="17" height="14" rx="2.2"/><circle cx="9" cy="10.2" r="1.6"/><path d="M3.8 16.2 8.5 12l3.2 2.6 3-3.4 5.5 5.2"/></svg></button>
-  <button class="send" type="submit" title="ارسال" aria-label="ارسال"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></button>
+  <input type="text" name="text" placeholder="<%= t('idea.composer') %>" aria-label="<%= t('idea.composer') %>">
+  <button class="attach" type="button" title="<%= t('common.attach') %>" aria-label="<%= t('common.attach') %>"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="5" width="17" height="14" rx="2.2"/><circle cx="9" cy="10.2" r="1.6"/><path d="M3.8 16.2 8.5 12l3.2 2.6 3-3.4 5.5 5.2"/></svg></button>
+  <button class="send" type="submit" title="<%= t('common.send') %>" aria-label="<%= t('common.send') %>"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></button>
 </form>
-<p class="toast" id="copied" hidden>لینک کپی شد</p>
+<p class="toast" id="copied" hidden><%= t('common.copied') %></p>
 <%- include('partials/close', { auth: false }) %>

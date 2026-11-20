@@ -123,6 +123,7 @@
       });
     }
     showSettings();
+    if (window.gdlSyncTheme) window.gdlSyncTheme();
     var play = document.getElementById('play');
     var vid = document.getElementById('vid');
     if (play && vid) {

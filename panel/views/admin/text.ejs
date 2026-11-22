@@ -1,6 +1,16 @@
 <%- include('open', { bare: false, active: 'texts', title: 'ویرایش متن' }) %>
-<header class="head"><h1 class="h1s">ویرایش متن</h1><p class="sub"><%= groupLabel %> — <span class="num"><%= row.key %></span></p></header>
+<header class="head">
+  <h1 class="h1s">ویرایش متن</h1>
+  <p class="sub"><%= location %></p>
+  <p class="keyline"><%= row.key %></p>
+</header>
 <section class="section">
+  <% if (pair) { %>
+    <div class="pairbox">
+      <span><%= pair.label %></span>
+      <p><%= pair.value %></p>
+    </div>
+  <% } %>
   <form method="post" action="/admin/texts/<%= encodeURIComponent(row.key) %>">
     <input type="hidden" name="_csrf" value="<%= csrf %>">
     <label class="admin-field"><span>متن</span><textarea name="value" style="min-height:160px"><%= row.value %></textarea></label>

@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const lib = require('./lib');
 const repo = require('./repo');
 const texts = require('./texts');
+const places = require('./text-places');
 const { getKnex } = require('./db');
 
 const PER = 12;
@@ -14,12 +15,6 @@ const NOTES = {
 };
 const KINDS = { idea: 'ایده‌پردازی', assistant: 'طراحیار', image: 'ساخت تصویر' };
 const STATUS = { paid: 'پرداخت‌شده', manual: 'دستی', failed: 'ناموفق' };
-const GROUPS = {
-  landing: 'صفحهٔ اصلی', auth: 'ورود و ثبت‌نام', nav: 'منو', common: 'مشترک', month: 'ماه‌ها',
-  dash: 'میز کار', idea: 'ایده‌پردازی', assistant: 'طراحیار', image: 'ساخت تصویر',
-  refine: 'اصلاح و انتخاب طرح', projects: 'پروژه‌ها', stage: 'مراحل پروژه', courses: 'دوره‌ها',
-  sub: 'اشتراک', settings: 'تنظیمات'
-};
 const FLOWS = [
   ['idea', 'سؤال‌های انتخاب طرح'],
   ['assistant', 'سؤال طراحیار'],
@@ -747,28 +742,41 @@ module.exports = function admin(app, tools) {
 
   get('/admin/texts', async function (req, res) {
     const query = pageQuery(req);
-    const group = GROUPS[req.query.g] ? req.query.g : '';
-    let builder = knex()('texts').orderBy('grp', 'asc').orderBy('key', 'asc');
-    if (group) builder = builder.where({ grp: group });
-    if (query.q) {
+    const pageInfo = places.pages.find((item) => item.id === req.query.g);
+    const group = pageInfo ? pageInfo.id : '';
+    let builder = places.orderByPlace(knex()('texts'));
+    if (pageInfo) builder = builder.whereIn('grp', pageInfo.groups);
+    const words = query.q.toLowerCase().split(/\s+/).filter(Boolean);
+    if (words.length) {
       builder = builder.where(function () {
-        this.where('key', 'like', '%' + query.q + '%')
-          .orWhere('value', 'like', '%' + query.q + '%')
-          .orWhere('label', 'like', '%' + query.q + '%');
+        words.forEach((word) => {
+          const term = '%' + word.replace(/[\\%_]/g, (ch) => '\\' + ch) + '%';
+          this.orWhereRaw("lower(\"key\") like ? escape '\\'", [term])
+            .orWhereRaw("lower(\"value\") like ? escape '\\'", [term]);
+        });
       });
     }
     const listed = await pageRows(builder, query.page);
     res.render('admin/texts', {
       note: noteOf(req), q: query.q, group, page: listed.page, pages: listed.pages,
       pageHref: hrefFor('/admin/texts', query.q, group ? { g: group } : {}),
-      groups: Object.keys(GROUPS).map((id) => ({ id, label: GROUPS[id] })),
-      rows: listed.rows.map((row) => ({ key: row.key, value: row.value, groupLabel: GROUPS[row.grp] || row.label }))
+      groups: places.pages.map((item) => ({ id: item.id, label: item.label })),
+      rows: listed.rows.map((row) => {
+        const info = places.place(row.key);
+        return { key: row.key, value: row.value, pageLabel: info.pageLabel, location: info.location };
+      })
     });
   });
   get('/admin/texts/:key', async function (req, res) {
     const row = await knex()('texts').where({ key: req.params.key }).first();
     if (!row) return res.redirect('/admin/texts');
-    res.render('admin/text', { note: noteOf(req), row, groupLabel: GROUPS[row.grp] || row.label });
+    const info = places.place(row.key);
+    const sibling = places.pairKey(row.key);
+    const other = sibling ? await knex()('texts').where({ key: sibling }).first() : null;
+    res.render('admin/text', {
+      note: noteOf(req), row, location: info.location, pageLabel: info.pageLabel,
+      pair: other ? { label: sibling.endsWith('.q') ? 'سوال' : 'جواب', value: other.value } : null
+    });
   });
   post('/admin/texts/:key', async function (req, res) {
     const row = await knex()('texts').where({ key: req.params.key }).first();

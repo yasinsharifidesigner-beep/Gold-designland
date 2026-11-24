@@ -100,6 +100,10 @@ html[data-theme="dark"] .st.big.lit { color: var(--on-gold); }
 .fl a:hover { color: var(--gold-text); }
 .so { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); display: inline-flex; align-items: center; justify-content: center; color: var(--ink); transition: all .3s; }
 .so:hover { border-color: var(--gold-text); color: var(--gold-text); background: var(--card); }
+.foot-bar { border-top: 1px solid var(--line); margin-top: 44px; padding-top: 22px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; color: var(--muted); font-size: 14px; }
+.enamad { display: inline-flex; align-items: center; justify-content: center; line-height: 0; }
+.enamad a, .enamad img { display: block; width: 125px; height: auto; max-width: 100%; }
+html[data-theme="dark"] .enamad { background: #fff; border-radius: 10px; padding: 8px; }
 
 @media (max-width: 959px) {
   .dn { display: none !important; }

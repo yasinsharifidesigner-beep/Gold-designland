@@ -1,4 +1,17 @@
+@font-face { font-family: Vazirmatn; font-weight: 400; font-style: normal; font-display: swap; src: url('/ui/fonts/Vazirmatn-Regular-arabic.woff2') format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: Vazirmatn; font-weight: 400; font-style: normal; font-display: swap; src: url('/ui/fonts/Vazirmatn-Regular-latin.woff2') format('woff2'); unicode-range: U+0000-00FF; }
+@font-face { font-family: Vazirmatn; font-weight: 500; font-style: normal; font-display: swap; src: url('/ui/fonts/Vazirmatn-Medium-arabic.woff2') format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: Vazirmatn; font-weight: 500; font-style: normal; font-display: swap; src: url('/ui/fonts/Vazirmatn-Medium-latin.woff2') format('woff2'); unicode-range: U+0000-00FF; }
+@font-face { font-family: Vazirmatn; font-weight: 600; font-style: normal; font-display: swap; src: url('/ui/fonts/Vazirmatn-SemiBold-arabic.woff2') format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: Vazirmatn; font-weight: 600; font-style: normal; font-display: swap; src: url('/ui/fonts/Vazirmatn-SemiBold-latin.woff2') format('woff2'); unicode-range: U+0000-00FF; }
+@font-face { font-family: Vazirmatn; font-weight: 700; font-style: normal; font-display: swap; src: url('/ui/fonts/Vazirmatn-Bold-arabic.woff2') format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: Vazirmatn; font-weight: 700; font-style: normal; font-display: swap; src: url('/ui/fonts/Vazirmatn-Bold-latin.woff2') format('woff2'); unicode-range: U+0000-00FF; }
+@font-face { font-family: Vazirmatn; font-weight: 800; font-style: normal; font-display: swap; src: url('/ui/fonts/Vazirmatn-Bold-arabic.woff2') format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: Vazirmatn; font-weight: 800; font-style: normal; font-display: swap; src: url('/ui/fonts/Vazirmatn-Bold-latin.woff2') format('woff2'); unicode-range: U+0000-00FF; }
+
 :root {
+  /* Persian UI type. Change this (and the @font-face above) to switch to Abar. */
+  --font-fa: Vazirmatn, sans-serif;
   --bg: #FAF8F4;
   --bg2: #F1EDE6;
   --card: #FFFFFF;
@@ -34,22 +47,23 @@ html[data-theme="dark"] {
   --head: rgba(7,26,51,.92);
 }
 
-html { scroll-behavior: smooth; background: var(--bg); }
+html { scroll-behavior: smooth; background: var(--bg); font-family: var(--font-fa); }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Noto Naskh Arabic', serif; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-fa); font-weight: 400; }
+button, input, select, textarea { font-family: inherit; }
 a { color: var(--gold-text); text-decoration: none; }
 a:hover { color: var(--gold-hover); }
 
-.k { font-family: 'Noto Kufi Arabic', sans-serif; }
+.k { font-family: var(--font-fa); }
 .gt { background: var(--gold-title); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
 .sec { padding: 112px 0; scroll-margin-top: 72px; }
 .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
-h1, h2 { font-family: 'Noto Kufi Arabic', sans-serif; margin: 0; font-weight: 700; line-height: 1.6; color: var(--ink); }
+h1, h2 { font-family: var(--font-fa); margin: 0; font-weight: 700; line-height: 1.6; color: var(--ink); }
 h1 { font-size: clamp(34px, 4.6vw, 56px); }
 h2 { font-size: clamp(28px, 3.4vw, 40px); }
 
-.btn { position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border-radius: 999px; padding: 15px 30px; font-family: 'Noto Kufi Arabic', sans-serif; font-weight: 600; font-size: 15px; cursor: pointer; border: 0; color: var(--ink); line-height: 1.5; transition: transform .35s ease, box-shadow .35s ease, background .35s ease, color .35s ease; }
+.btn { position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border-radius: 999px; padding: 15px 30px; font-family: var(--font-fa); font-weight: 600; font-size: 15px; cursor: pointer; border: 0; color: var(--ink); line-height: 1.5; transition: transform .35s ease, box-shadow .35s ease, background .35s ease, color .35s ease; }
 .gold { background: var(--gold); color: var(--on-gold); box-shadow: 0 6px 20px rgba(151, 120, 56, .22); }
 .gold:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(151, 120, 56, .32); color: var(--on-gold); }
 .gold::after { content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .55), transparent); transform: skewX(-18deg); animation: shine 7s ease-in-out infinite; }
@@ -58,7 +72,7 @@ h2 { font-size: clamp(28px, 3.4vw, 40px); }
 .out:hover { background: var(--ink); color: var(--bg); }
 .icbtn { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ink); padding: 0; transition: border-color .3s, color .3s; }
 .icbtn:hover { border-color: var(--gold-text); color: var(--gold-text); }
-.nl { font-family: 'Noto Kufi Arabic', sans-serif; font-size: 14px; color: var(--ink); padding: 8px 4px; transition: color .3s; }
+.nl { font-family: var(--font-fa); font-size: 14px; color: var(--ink); padding: 8px 4px; transition: color .3s; }
 .nl:hover { color: var(--gold-text); }
 .ph { background: var(--bg2); border: 1px solid var(--line); border-radius: 24px; display: flex; align-items: center; justify-content: center; color: var(--phicon); }
 .js .rv { opacity: 0; transform: translateY(18px); transition: opacity .8s ease, transform .8s ease; }
@@ -82,7 +96,7 @@ html[data-theme="dark"] ::selection { background: rgba(205,174,98,.35); color: #
 
 .fq { border: 1px solid var(--line); border-radius: 18px; background: var(--card); overflow: hidden; }
 .fqb { display: grid; transition: grid-template-rows .4s ease; grid-template-rows: 0fr; }
-.fqh { width: 100%; display: flex; align-items: center; gap: 14px; justify-content: space-between; background: none; border: 0; padding: 18px 20px; cursor: pointer; font-family: 'Noto Naskh Arabic', serif; font-size: 16px; font-weight: 600; color: var(--ink); text-align: right; line-height: 1.9; }
+.fqh { width: 100%; display: flex; align-items: center; gap: 14px; justify-content: space-between; background: none; border: 0; padding: 18px 20px; cursor: pointer; font-family: var(--font-fa); font-size: 16px; font-weight: 600; color: var(--ink); text-align: right; line-height: 1.9; }
 .fqh:hover { color: var(--gold-hover); }
 .pl { flex: none; width: 32px; height: 32px; border-radius: 10px; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--gold-text); transition: transform .35s ease; }
 
@@ -93,7 +107,7 @@ html[data-theme="dark"] ::selection { background: rgba(205,174,98,.35); color: #
 .st.lit { border-color: var(--gold-text); color: var(--gold-text); box-shadow: 0 0 0 6px rgba(220, 192, 122, .18); }
 .st.big.lit { background: var(--gold); border-color: transparent; color: #fff; }
 html[data-theme="dark"] .st.big.lit { color: var(--on-gold); }
-.sl { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); margin-top: 10px; width: 130px; text-align: center; font-family: 'Noto Kufi Arabic', sans-serif; font-size: 14px; font-weight: 600; color: var(--steplabel); transition: color .7s ease; line-height: 1.7; }
+.sl { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); margin-top: 10px; width: 130px; text-align: center; font-family: var(--font-fa); font-size: 14px; font-weight: 600; color: var(--steplabel); transition: color .7s ease; line-height: 1.7; }
 .st.lit .sl { color: var(--ink); }
 .tg { display: inline-block; white-space: nowrap; line-height: 1.7; margin-top: 4px; font-size: 11px; font-weight: 600; color: var(--gold-text); border: 1px solid var(--gold-text); border-radius: 999px; padding: 1px 10px; }
 .fl a { color: var(--muted); font-size: 15px; }

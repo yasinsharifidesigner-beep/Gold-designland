@@ -8,13 +8,13 @@
 (function(){try{var s=localStorage.getItem('gdl-theme');var t=(s==='light'||s==='dark')?s:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');var h=document.documentElement;h.setAttribute('data-theme',t);h.style.backgroundColor=t==='dark'?'#071A33':'#FAF8F4';h.style.colorScheme=t;}catch(e){}})();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700&family=Noto+Naskh+Arabic:wght@400;500;600&family=Cormorant+Garamond:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&display=swap">
 <link rel="stylesheet" href="styles.css">
 <script src="/ui/js/theme.js" defer></script>
 <script src="main.js" defer></script>
 </head>
 <body>
-<div dir="rtl" lang="fa" style="min-height:100vh;background:var(--bg);color:var(--ink);font-family:'Noto Naskh Arabic',serif;font-size:17px;line-height:2">
+<div dir="rtl" lang="fa" style="min-height:100vh;background:var(--bg);color:var(--ink);font-family:var(--font-fa);font-weight:400;font-size:17px;line-height:2">
 
 <header class="site-head" style="position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)">
   <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:16px;height:72px">
@@ -133,7 +133,7 @@
         <div class="st" data-x="70" data-y="495" style="left:70%;top:75%"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
         <div class="st" data-x="30" data-y="605" style="left:30%;top:91.67%"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>
       </div>
-      <div style="flex:1;display:grid;grid-template-rows:repeat(6,110px);font-family:'Noto Kufi Arabic',sans-serif;font-weight:600;font-size:15px;color:var(--ink)">
+      <div style="flex:1;display:grid;grid-template-rows:repeat(6,110px);font-family:var(--font-fa);font-weight:600;font-size:15px;color:var(--ink)">
         <div style="display:flex;align-items:center"><%= t('landing.road.1') %></div>
         <div style="display:flex;align-items:center"><%= t('landing.road.2') %></div>
         <div style="display:flex;align-items:center"><%= t('landing.road.3') %></div>

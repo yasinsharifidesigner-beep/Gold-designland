@@ -76,6 +76,135 @@
     });
   }
 
+  function asciiDigits(value) {
+    var fa = '۰۱۲۳۴۵۶۷۸۹';
+    var ar = '٠١٢٣٤٥٦٧٨٩';
+    var out = '';
+    String(value || '').split('').forEach(function (ch) {
+      var f = fa.indexOf(ch);
+      if (f >= 0) { out += String(f); return; }
+      var a = ar.indexOf(ch);
+      if (a >= 0) { out += String(a); return; }
+      if (ch >= '0' && ch <= '9') out += ch;
+    });
+    return out;
+  }
+
+  function bindOtp(otp) {
+    var boxes = Array.prototype.slice.call(otp.querySelectorAll('input'));
+    if (!boxes.length) return;
+    otp.setAttribute('dir', 'ltr');
+    var filling = false;
+    function mark(index) {
+      boxes.forEach(function (box, j) { box.classList.toggle('on', j === index); });
+    }
+    function put(start, chars) {
+      var text = asciiDigits(chars).slice(0, boxes.length - start);
+      if (!text) return;
+      filling = true;
+      for (var n = 0; n < text.length; n += 1) boxes[start + n].value = text.charAt(n);
+      filling = false;
+      var focusAt = Math.min(start + text.length, boxes.length - 1);
+      boxes[focusAt].focus();
+      mark(focusAt);
+    }
+    boxes.forEach(function (box, i) {
+      box.setAttribute('dir', 'ltr');
+      box.addEventListener('keydown', function (event) {
+        if (event.key === 'ArrowLeft' && boxes[i - 1]) {
+          event.preventDefault();
+          boxes[i - 1].focus();
+          mark(i - 1);
+          return;
+        }
+        if (event.key === 'ArrowRight' && boxes[i + 1]) {
+          event.preventDefault();
+          boxes[i + 1].focus();
+          mark(i + 1);
+          return;
+        }
+        if (event.key !== 'Backspace') return;
+        event.preventDefault();
+        if (box.value) {
+          box.value = '';
+          mark(i);
+          return;
+        }
+        if (!boxes[i - 1]) return;
+        boxes[i - 1].value = '';
+        boxes[i - 1].focus();
+        mark(i - 1);
+      });
+      box.addEventListener('paste', function (event) {
+        var data = event.clipboardData || window.clipboardData;
+        var text = data ? data.getData('text') : '';
+        var chars = asciiDigits(text);
+        if (!chars) return;
+        event.preventDefault();
+        if (chars.length >= boxes.length) {
+          boxes.forEach(function (item) { item.value = ''; });
+          put(0, chars);
+          return;
+        }
+        put(i, chars);
+      });
+      box.addEventListener('input', function () {
+        if (filling) return;
+        var chars = asciiDigits(box.value);
+        if (chars.length > 1) {
+          put(chars.length >= boxes.length ? 0 : i, chars);
+          return;
+        }
+        box.value = chars.slice(0, 1);
+        if (box.value && boxes[i + 1]) {
+          boxes[i + 1].focus();
+          mark(i + 1);
+          return;
+        }
+        mark(i);
+      });
+    });
+    boxes[0].focus();
+    mark(0);
+  }
+
+  function faNum(value) {
+    return String(value).replace(/\d/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; });
+  }
+
+  function bindTimer(timer) {
+    var left = parseInt(timer.getAttribute('data-left'), 10);
+    if (!isFinite(left)) left = 60;
+    function showResend() {
+      var label = timer.getAttribute('data-resend') || '';
+      timer.textContent = '';
+      var link = document.createElement('a');
+      link.href = location.pathname + '?resend=1';
+      link.textContent = label;
+      timer.appendChild(link);
+    }
+    function paint() {
+      var span = timer.querySelector('span');
+      if (!span) return;
+      var secs = String(left % 60).padStart(2, '0');
+      span.textContent = faNum(Math.floor(left / 60)) + ':' + faNum(secs);
+    }
+    if (left <= 0) {
+      if (!timer.querySelector('a')) showResend();
+      return;
+    }
+    timerId = setInterval(function () {
+      left -= 1;
+      if (left <= 0) {
+        clearInterval(timerId);
+        timerId = null;
+        showResend();
+        return;
+      }
+      paint();
+    }, 1000);
+  }
+
   function bootPage() {
     bindDrawer();
     closeDrawer();
@@ -86,33 +215,9 @@
     var stream = document.getElementById('stream');
     if (stream) stream.scrollTop = stream.scrollHeight;
     var otp = document.getElementById('otp');
-    if (otp) {
-      var boxes = otp.querySelectorAll('input');
-      boxes.forEach(function (box, i) {
-        box.addEventListener('input', function () {
-          box.value = box.value.replace(/\D/g, '').slice(-1);
-          if (box.value && boxes[i + 1]) boxes[i + 1].focus();
-          boxes.forEach(function (b, j) { b.classList.toggle('on', j === (box.value && boxes[i + 1] ? i + 1 : i)); });
-        });
-      });
-    }
+    if (otp) bindOtp(otp);
     var timer = document.getElementById('timer');
-    if (timer) {
-      var left = 58;
-      timerId = setInterval(function () {
-        left -= 1;
-        if (left <= 0) {
-          clearInterval(timerId);
-          timerId = null;
-          timer.innerHTML = '<a href="' + location.pathname + '?resend=1">' + (timer.getAttribute('data-resend') || '') + '</a>';
-          return;
-        }
-        var m = Math.floor(left / 60);
-        var s = String(left % 60).padStart(2, '0');
-        var fa = s.replace(/\d/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; });
-        timer.querySelector('span').textContent = '۰:' + fa;
-      }, 1000);
-    }
+    if (timer) bindTimer(timer);
     var share = document.getElementById('share');
     if (share) {
       share.addEventListener('click', function () {

@@ -2,6 +2,7 @@ const path = require('path');
 const session = require('express-session');
 const DbSessionStore = require('./session-store');
 const repo = require('./repo');
+const otp = require('./otp');
 const lib = require('./lib');
 const texts = require('./texts');
 const { getKnex } = require('./db');
@@ -91,7 +92,7 @@ module.exports = function mount(app) {
       error: '',
       phone: '',
       phoneShow: '',
-      left: 58,
+      left: 60,
       first: '',
       last: '',
       d: '',
@@ -101,11 +102,22 @@ module.exports = function mount(app) {
   }
 
   function otpDigits(body) {
-    return [0, 1, 2, 3, 4].map((i) => lib.toLatinDigits((body && body['d' + i]) || '')).join('');
+    return [0, 1, 2, 3, 4].map((i) => lib.toLatinDigits((body && body['d' + i]) || '').replace(/\D/g, '').slice(-1)).join('');
+  }
+
+  function clientIp(req) {
+    return req.ip || '';
   }
 
   function signupReady(req, step) {
     return !!(req.session.signup && req.session.signup.step >= step && req.session.signup.phone);
+  }
+
+  async function showCode(res, mode, phone, extra) {
+    authView(res, mode, Object.assign({
+      phoneShow: lib.phoneSpaced(phone),
+      left: await otp.cooldownLeft(phone)
+    }, extra || {}));
   }
 
   app.get('/auth/login', function (req, res) { authView(res, 'login'); });
@@ -116,27 +128,29 @@ module.exports = function mount(app) {
     const phone = lib.normalizePhone(req.body.phone);
     if (!/^09\d{9}$/.test(phone)) return authView(res, 'signup1', { error: texts.t('auth.errPhone'), phone: req.body.phone });
     if (await repo.userByPhone(phone)) return authView(res, 'signup1', { error: texts.t('auth.errExists'), phone: req.body.phone });
+    const sent = await otp.issue({ phone, purpose: 'signup', ip: clientIp(req) });
+    if (!sent.ok) return authView(res, 'signup1', { error: otp.message(sent.reason), phone: req.body.phone });
     req.session.signup = { phone, step: 2 };
-    req.session.otpUntil = Date.now() + 60000;
     res.redirect('/auth/signup/verify');
   }));
-  app.get('/auth/signup/verify', function (req, res) {
+  app.get('/auth/signup/verify', asyncRoute(async function (req, res) {
     if (!signupReady(req, 2)) return res.redirect('/auth/signup');
-    authView(res, 'signup2', { phoneShow: lib.phoneSpaced(req.session.signup.phone), left: 58 });
-  });
-  app.post('/auth/signup/verify', csrf, function (req, res) {
-    if (!signupReady(req, 2)) return res.redirect('/auth/signup');
-    const code = otpDigits(req.body);
-    if (code !== repo.DEMO_CODE) {
-      return authView(res, 'signup2', {
-        error: texts.t('auth.errCode'),
-        phoneShow: lib.phoneSpaced(req.session.signup.phone),
-        left: 58
-      });
+    const phone = req.session.signup.phone;
+    let error = '';
+    if (req.query.resend === '1') {
+      const sent = await otp.issue({ phone, purpose: 'signup', ip: clientIp(req) });
+      if (!sent.ok) error = otp.message(sent.reason);
     }
+    await showCode(res, 'signup2', phone, { error });
+  }));
+  app.post('/auth/signup/verify', csrf, asyncRoute(async function (req, res) {
+    if (!signupReady(req, 2)) return res.redirect('/auth/signup');
+    const phone = req.session.signup.phone;
+    const result = await otp.check({ phone, purpose: 'signup', code: otpDigits(req.body) });
+    if (!result.ok) return showCode(res, 'signup2', phone, { error: otp.message(result.reason) });
     req.session.signup.step = 3;
     res.redirect('/auth/signup/profile');
-  });
+  }));
   app.get('/auth/signup/profile', function (req, res) {
     if (!signupReady(req, 3)) return res.redirect('/auth/signup');
     const s = req.session.signup;
@@ -204,23 +218,26 @@ module.exports = function mount(app) {
     const user = await repo.userByPhone(phone);
     if (!user) return authView(res, 'forgot1', { error: texts.t('auth.errNoUser'), phone: req.body.phone });
     if (user.blocked) return authView(res, 'forgot1', { error: texts.t('auth.errBlocked'), phone: req.body.phone });
+    const sent = await otp.issue({ phone, purpose: 'login', ip: clientIp(req) });
+    if (!sent.ok) return authView(res, 'forgot1', { error: otp.message(sent.reason), phone: req.body.phone });
     req.session.forgot = { phone, userId: user.id };
     res.redirect('/auth/forgot/code');
   }));
-  app.get('/auth/forgot/code', function (req, res) {
+  app.get('/auth/forgot/code', asyncRoute(async function (req, res) {
     if (!req.session.forgot || !req.session.forgot.phone) return res.redirect('/auth/forgot');
-    authView(res, 'forgot2', { phoneShow: lib.phoneSpaced(req.session.forgot.phone), left: 58 });
-  });
+    const phone = req.session.forgot.phone;
+    let error = '';
+    if (req.query.resend === '1') {
+      const sent = await otp.issue({ phone, purpose: 'login', ip: clientIp(req) });
+      if (!sent.ok) error = otp.message(sent.reason);
+    }
+    await showCode(res, 'forgot2', phone, { error });
+  }));
   app.post('/auth/forgot/verify', csrf, asyncRoute(async function (req, res) {
     if (!req.session.forgot || !req.session.forgot.phone) return res.redirect('/auth/forgot');
-    const code = otpDigits(req.body);
-    if (code !== repo.DEMO_CODE) {
-      return authView(res, 'forgot2', {
-        error: texts.t('auth.errCode'),
-        phoneShow: lib.phoneSpaced(req.session.forgot.phone),
-        left: 58
-      });
-    }
+    const phone = req.session.forgot.phone;
+    const result = await otp.check({ phone, purpose: 'login', code: otpDigits(req.body) });
+    if (!result.ok) return showCode(res, 'forgot2', phone, { error: otp.message(result.reason) });
     const user = await repo.userById(req.session.forgot.userId);
     req.session.userId = req.session.forgot.userId;
     req.session.authMethod = 'otp';
@@ -636,17 +653,22 @@ module.exports = function mount(app) {
     res.redirect('/panel/subscription/success');
   }));
 
-  app.get('/panel/settings', guard, function (req, res) {
-    res.render('settings', {
+  function settingsPage(req, res, extra) {
+    const phone = extra && extra.newPhone != null ? extra.newPhone : (req.session.newPhone || '');
+    res.render('settings', Object.assign({
       tab: 'account',
       showCurrent: req.session.authMethod !== 'otp',
       masked: lib.phoneMasked(res.locals.user.phone),
       changePhone: req.query.phone === '1',
       codeSent: req.query.code === '1',
-      newPhone: req.session.newPhone || '',
-      phoneShow: req.session.newPhone ? lib.phoneSpaced(req.session.newPhone) : '',
+      newPhone: phone,
+      phoneShow: phone ? lib.phoneSpaced(phone) : '',
       error: '', ok: ''
-    });
+    }, extra || {}));
+  }
+
+  app.get('/panel/settings', guard, function (req, res) {
+    settingsPage(req, res);
   });
   app.post('/panel/settings/avatar', guard, function (req, res) {
     req.on('data', function () {});
@@ -662,18 +684,33 @@ module.exports = function mount(app) {
     if (req.body.newPhone) req.session.newPhone = lib.normalizePhone(req.body.newPhone);
     res.redirect('/panel/settings#account');
   }));
-  app.post('/panel/settings/phone', guard, csrf, function (req, res) {
+  app.post('/panel/settings/phone', guard, csrf, asyncRoute(async function (req, res) {
     const phone = lib.normalizePhone(req.body.newPhone || req.session.newPhone);
     if (!/^09\d{9}$/.test(phone)) return res.redirect('/panel/settings?phone=1');
+    const sent = await otp.issue({ phone, purpose: 'phone', ip: clientIp(req) });
+    if (!sent.ok) {
+      req.session.newPhone = phone;
+      return settingsPage(req, res, { changePhone: true, codeSent: false, newPhone: phone, error: otp.message(sent.reason) });
+    }
     req.session.newPhone = phone;
     res.redirect('/panel/settings?phone=1&code=1');
-  });
+  }));
   app.post('/panel/settings/phone/verify', guard, csrf, asyncRoute(async function (req, res) {
-    const code = [0, 1, 2, 3, 4].map((i) => lib.toLatinDigits(req.body['d' + i] || '')).join('');
-    if (code === repo.DEMO_CODE && req.session.newPhone) {
-      await repo.updateUser(req.session.userId, { phone: req.session.newPhone });
-      await repo.log(req.session.userId, 'phone', 'شمارهٔ موبایل عوض شد.');
+    const phone = req.session.newPhone;
+    if (!phone) return res.redirect('/panel/settings?phone=1');
+    const result = await otp.check({ phone, purpose: 'phone', code: otpDigits(req.body) });
+    if (!result.ok) {
+      return settingsPage(req, res, {
+        changePhone: true, codeSent: true, newPhone: phone,
+        phoneShow: lib.phoneSpaced(phone), error: otp.message(result.reason)
+      });
     }
+    const taken = await repo.userByPhone(phone);
+    if (taken && taken.id !== req.session.userId) {
+      return settingsPage(req, res, { changePhone: true, codeSent: false, newPhone: phone, error: texts.t('auth.errExists') });
+    }
+    await repo.updateUser(req.session.userId, { phone });
+    await repo.log(req.session.userId, 'phone', 'شمارهٔ موبایل عوض شد.');
     req.session.newPhone = '';
     res.redirect('/panel/settings');
   }));

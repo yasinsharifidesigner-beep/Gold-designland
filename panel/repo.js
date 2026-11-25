@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const { getKnex } = require('./db');
+const lib = require('./lib');
 const texts = require('./texts');
 
 const STAGES = ['idea', 'refine', 'assistant', 'image'];
@@ -141,7 +142,7 @@ async function log(userId, action, summary) {
 
 async function createUser(fields) {
   const id = 'u' + await nextSeq();
-  const hash = await bcrypt.hash(fields.password, 10);
+  const hash = await bcrypt.hash(lib.normalizePassword(fields.password), 10);
   await db()('users').insert({
     id,
     phone: fields.phone,
@@ -200,13 +201,17 @@ async function updateUser(id, patch) {
 }
 
 async function setPassword(id, plain) {
-  const hash = await bcrypt.hash(plain, 10);
+  const hash = await bcrypt.hash(lib.normalizePassword(plain), 10);
   await updateUser(id, { passwordHash: hash });
 }
 
 async function checkPassword(user, plain) {
   if (!user || !user.passwordHash) return false;
-  return bcrypt.compare(String(plain || ''), user.passwordHash);
+  const raw = String(plain == null ? '' : plain);
+  const normalized = lib.normalizePassword(raw);
+  if (await bcrypt.compare(normalized, user.passwordHash)) return true;
+  if (normalized !== raw) return bcrypt.compare(raw, user.passwordHash);
+  return false;
 }
 
 async function hasWork(userId) {

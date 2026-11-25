@@ -19,5 +19,5 @@
 <div class="app">
 <%- include('side', { active: active }) %>
 <main class="main dash reveal">
-<% if (typeof note !== 'undefined' && note) { %><p class="oknote"><%= note %></p><% } %>
+<%- include('../partials/toast-seed', { kind: 'success', text: typeof note !== 'undefined' ? note : '' }) %>
 <% } %>

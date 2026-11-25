@@ -44,7 +44,8 @@
     <div class="step"><%= t('auth.step', { n: fa(4) }) %></div>
     <form method="post" action="/auth/signup/password" autocomplete="off">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
-      <input class="afield" type="password" name="password" autocomplete="new-password" placeholder="<%= t('auth.passPh') %>">
+      <input class="afield" type="password" name="password" autocomplete="new-password" placeholder="<%= t('auth.passPh') %>" aria-describedby="passhint">
+      <p class="passhint" id="passhint" data-pass-hint data-pass-input="password"><span class="passhint-mark" aria-hidden="true"></span><span><%= t('auth.passHint') %></span></p>
       <input class="afield" type="password" name="again" autocomplete="new-password" placeholder="<%= t('auth.againPh') %>">
       <button class="btn" type="submit"><%= t('auth.go') %></button>
     </form>
@@ -67,6 +68,6 @@
     </form>
     <a class="sublink" href="/auth/login"><%= t('auth.backPassword') %></a>
   <% } %>
-  <% if (error) { %><p class="err"><%= error %></p><% } %>
+  <%- include('partials/toast-seed', { kind: 'error', text: error }) %>
 </article>
 <%- include('partials/close', { auth: true }) %>

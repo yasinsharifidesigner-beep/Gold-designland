@@ -161,7 +161,8 @@ block('auth', 'مشخصات', [
 block('auth', 'رمز عبور', [
   ['auth.passTitle', 'عنوان'],
   ['auth.passPh', 'جای رمز'],
-  ['auth.againPh', 'جای تکرار رمز']
+  ['auth.againPh', 'جای تکرار رمز'],
+  ['auth.passHint', 'راهنمای رمز']
 ]);
 block('auth', 'ورود', [
   ['auth.loginH', 'عنوان'],
@@ -174,6 +175,7 @@ block('auth', 'خطا', [
   ['auth.errCode', 'کد نادرست'],
   ['auth.errProfile', 'مشخصات ناقص'],
   ['auth.errPass', 'رمز و تکرار یکی نیستند'],
+  ['auth.errPassRule', 'رمز کوتاه یا بدون حرف و عدد'],
   ['auth.errNoUser', 'حساب پیدا نشد'],
   ['auth.errBadPass', 'رمز نادرست'],
   ['auth.errBlocked', 'حساب مسدود'],

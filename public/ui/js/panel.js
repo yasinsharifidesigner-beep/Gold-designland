@@ -64,7 +64,9 @@
   function showSettings() {
     var panes = document.querySelectorAll('[data-tab]');
     if (!panes.length) return;
-    var tab = (location.hash || '#account').slice(1);
+    var board = document.querySelector('.board');
+    var preset = !location.hash && board ? (board.getAttribute('data-open') || '') : '';
+    var tab = (location.hash || (preset ? '#' + preset : '#account')).slice(1);
     if (tab === 'logout') {
       var modal = document.getElementById('logout');
       if (modal) modal.hidden = false;
@@ -470,12 +472,12 @@
       share.addEventListener('click', function () {
         var link = share.getAttribute('data-link');
         if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(link).catch(function () {});
-        var toast = document.getElementById('copied');
-        if (toast) { toast.hidden = false; setTimeout(function () { toast.hidden = true; }, 1800); }
+        if (window.gdlToast) window.gdlToast(share.getAttribute('data-copied') || '', 'info');
       });
     }
     showSettings();
     syncSelboxes();
+    if (window.gdlToast && window.gdlToast.collect) window.gdlToast.collect();
     if (window.gdlSyncTheme) window.gdlSyncTheme();
     var play = document.getElementById('play');
     var vid = document.getElementById('vid');

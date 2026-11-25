@@ -1,6 +1,6 @@
 <%- include('open', { bare: false, active: 'projects', title: project.title }) %>
 <header class="head"><h1 class="h1s"><%= project.title %></h1><p class="sub"><a class="rowlink" href="/admin/users/<%= project.userId %>"><%= userName %></a></p></header>
-<% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+<%- include('../partials/toast-seed', { kind: 'error', text: error }) %>
 <section class="section">
   <form method="post" action="/admin/projects/<%= project.slug %>">
     <input type="hidden" name="_csrf" value="<%= csrf %>">

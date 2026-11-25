@@ -1,6 +1,6 @@
 <%- include('open', { bare: false, active: 'courses', title: course ? course.title : 'دورهٔ جدید' }) %>
 <header class="head"><h1 class="h1s"><%= course ? course.title : 'دورهٔ جدید' %></h1></header>
-<% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+<%- include('../partials/toast-seed', { kind: 'error', text: error }) %>
 <section class="section">
   <form method="post" action="<%= course ? '/admin/courses/' + course.id : '/admin/courses' %>">
     <input type="hidden" name="_csrf" value="<%= csrf %>">

@@ -334,7 +334,7 @@ test('sms otp and ltr code boxes', { timeout: 60000 }, async () => {
     const settings = await get(jarLogin, '/panel/settings');
     assert.equal(settings.text.includes('رمز فعلی'), false);
     const changed = await post(jarLogin, '/panel/settings/password', {
-      _csrf: csrfOf(settings.text), next: '87654321', again: '87654321'
+      _csrf: csrfOf(settings.text), next: 'gold8765', again: 'gold8765'
     });
     assert.equal(changed.status, 302);
     await post(jarLogin, '/auth/logout', { _csrf: csrfOf(settings.text) });
@@ -342,7 +342,7 @@ test('sms otp and ltr code boxes', { timeout: 60000 }, async () => {
     const badPass = await post(jarLogin, '/auth/login', { _csrf: csrfOf(loginPage.text), phone: '09123456789', password: '12345678' });
     assert.equal(badPass.status, 200);
     const loginAgain = await get(jarLogin, '/auth/login');
-    const goodPass = await post(jarLogin, '/auth/login', { _csrf: csrfOf(loginAgain.text), phone: '09123456789', password: '87654321' });
+    const goodPass = await post(jarLogin, '/auth/login', { _csrf: csrfOf(loginAgain.text), phone: '09123456789', password: 'gold8765' });
     assert.equal(goodPass.status, 302);
     assert.equal(goodPass.location, '/panel');
 

@@ -12,7 +12,7 @@
       <input class="afield" type="password" name="password" placeholder="رمز عبور" autocomplete="current-password">
       <button class="btn" type="submit">ورود</button>
     </form>
-    <% if (error) { %><p class="err"><%= error %></p><% } %>
+    <%- include('../partials/toast-seed', { kind: 'error', text: error }) %>
   <% } %>
 </article>
 <%- include('close', { bare: true }) %>

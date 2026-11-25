@@ -5,9 +5,9 @@
   <% if (mode === 'signup1') { %>
     <h2><%= t('auth.signupPhoneTitle') %></h2>
     <div class="step"><%= t('auth.step', { n: fa(1) }) %></div>
-    <form method="post" action="/auth/signup">
+    <form method="post" action="/auth/signup" autocomplete="off">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
-      <input class="afield phone" name="phone" inputmode="numeric" placeholder="<%= t('auth.phonePh') %>" value="<%= phone || '' %>">
+      <input class="afield phone" name="phone" inputmode="numeric" autocomplete="off" placeholder="<%= t('auth.phonePh') %>" value="<%= phone || '' %>">
       <button class="btn" type="submit"><%= t('auth.sendCode') %></button>
     </form>
     <a class="sublink" href="/auth/login"><%= t('auth.haveAccount') %></a>
@@ -15,7 +15,7 @@
     <h2><%= mode === 'signup2' ? t('auth.codeTitle') : t('auth.otpTitle') %></h2>
     <% if (mode === 'signup2') { %><div class="step"><%= t('auth.step', { n: fa(2) }) %></div><% } %>
     <div class="oknote"><%= t('auth.codeFor') %> <b class="phone"><%= typeof phoneShow === 'undefined' ? '' : phoneShow %></b> <%= t('auth.codeSentTail') %></div>
-    <form method="post" action="<%= mode === 'signup2' ? '/auth/signup/verify' : '/auth/forgot/verify' %>">
+    <form method="post" action="<%= mode === 'signup2' ? '/auth/signup/verify' : '/auth/forgot/verify' %>" autocomplete="off">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
       <%- include('partials/otp') %>
       <% const secs = Math.max(0, Number(left) || 0); const clock = fa(Math.floor(secs / 60)) + ':' + fa(String(secs % 60).padStart(2, '0')); %>
@@ -27,10 +27,10 @@
   <% } else if (mode === 'signup3') { %>
     <h2><%= t('auth.profileTitle') %></h2>
     <div class="step"><%= t('auth.step', { n: fa(3) }) %></div>
-    <form method="post" action="/auth/signup/profile">
+    <form method="post" action="/auth/signup/profile" autocomplete="off">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
-      <input class="afield" name="first" placeholder="<%= t('auth.firstPh') %>" value="<%= typeof first === 'undefined' ? '' : first %>">
-      <input class="afield" name="last" placeholder="<%= t('auth.lastPh') %>" value="<%= typeof last === 'undefined' ? '' : last %>">
+      <input class="afield" name="first" autocomplete="off" placeholder="<%= t('auth.firstPh') %>" value="<%= typeof first === 'undefined' ? '' : first %>">
+      <input class="afield" name="last" autocomplete="off" placeholder="<%= t('auth.lastPh') %>" value="<%= typeof last === 'undefined' ? '' : last %>">
       <div class="datesel">
         <% const pickedDay = typeof d === 'undefined' ? '' : String(d); const pickedMonth = typeof m === 'undefined' ? '' : String(m); const pickedYear = typeof y === 'undefined' ? '' : String(y); %>
         <label class="selbox"><span><%= t('auth.day') %></span><select name="d"><option value=""><%= t('auth.day') %></option><% for (let i=1;i<=31;i++) { %><option value="<%= i %>"<%= pickedDay === String(i) ? ' selected' : '' %>><%= fa(i) %></option><% } %></select><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg></label>
@@ -42,27 +42,27 @@
   <% } else if (mode === 'signup4') { %>
     <h2><%= t('auth.passTitle') %></h2>
     <div class="step"><%= t('auth.step', { n: fa(4) }) %></div>
-    <form method="post" action="/auth/signup/password">
+    <form method="post" action="/auth/signup/password" autocomplete="off">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
-      <input class="afield" type="password" name="password" placeholder="<%= t('auth.passPh') %>">
-      <input class="afield" type="password" name="again" placeholder="<%= t('auth.againPh') %>">
+      <input class="afield" type="password" name="password" autocomplete="new-password" placeholder="<%= t('auth.passPh') %>">
+      <input class="afield" type="password" name="again" autocomplete="new-password" placeholder="<%= t('auth.againPh') %>">
       <button class="btn" type="submit"><%= t('auth.go') %></button>
     </form>
   <% } else if (mode === 'login') { %>
     <h2><%= t('auth.loginH') %></h2>
-    <form method="post" action="/auth/login" style="margin-top:10px">
+    <form method="post" action="/auth/login" style="margin-top:10px" autocomplete="off">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
-      <input class="afield phone" name="phone" inputmode="numeric" placeholder="<%= t('auth.phonePh') %>" value="<%= phone || '' %>">
-      <input class="afield" type="password" name="password" placeholder="<%= t('auth.passPh') %>">
+      <input class="afield phone" name="phone" inputmode="numeric" autocomplete="off" placeholder="<%= t('auth.phonePh') %>" value="<%= phone || '' %>">
+      <input class="afield" type="password" name="password" autocomplete="new-password" placeholder="<%= t('auth.passPh') %>">
       <button class="btn" type="submit"><%= t('auth.go') %></button>
     </form>
     <a class="link" href="/auth/forgot"><%= t('auth.forgot') %></a>
     <a class="sublink" href="/auth/signup"><%= t('auth.noAccount') %></a>
   <% } else { %>
     <h2><%= t('auth.otpTitle') %></h2>
-    <form method="post" action="/auth/forgot" style="margin-top:10px">
+    <form method="post" action="/auth/forgot" style="margin-top:10px" autocomplete="off">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
-      <input class="afield phone" name="phone" inputmode="numeric" placeholder="<%= t('auth.phonePh') %>" value="<%= phone || '' %>">
+      <input class="afield phone" name="phone" inputmode="numeric" autocomplete="off" placeholder="<%= t('auth.phonePh') %>" value="<%= phone || '' %>">
       <button class="btn" type="submit"><%= t('auth.sendCode') %></button>
     </form>
     <a class="sublink" href="/auth/login"><%= t('auth.backPassword') %></a>

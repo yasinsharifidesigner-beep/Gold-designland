@@ -52,9 +52,8 @@
   <section class="w">
     <div class="wh"><span class="wi"><%- include('partials/ico', { name: 'cam' }) %></span><h2><%= t('dash.shots') %></h2><% if (!empty) { %><a class="more" href="/panel/chats/image"><%= t('common.seeAll') %></a><% } %></div>
     <% if (empty) { %>
-      <div class="tiles"><% for (let i=0;i<4;i++) { %><div class="sg"></div><% } %>
-        <div class="imgs-cta"><p><%= t('dash.noShot') %></p><a class="ebtn" href="/panel/chats/image"><%= t('nav.image') %></a></div>
-      </div>
+      <div class="tiles"><% for (let i=0;i<4;i++) { %><div class="sg"></div><% } %></div>
+      <div class="empty"><p><%= t('dash.noShot') %></p><a class="ebtn" href="/panel/chats/image"><%= t('nav.image') %></a></div>
     <% } else { %>
       <div class="shots"><% shots.forEach(function (s) { %><a class="shot" href="/panel/chats/image/<%= s.chatId %>"><%- include('partials/sketch', { shape: 'ring' }) %></a><% }) %></div>
     <% } %>

@@ -371,6 +371,23 @@
 .selbox { height: 52px; border-radius: 14px; background: var(--fieldbg); border: 1px solid var(--border); padding: 0 14px; display: flex; align-items: center; justify-content: space-between; position: relative; }
 .selbox select { position: absolute; inset: 0; opacity: 0; width: 100%; }
 .selbox span { font: 500 15px Vazirmatn; color: var(--muted); }
+.selbox.has-value span { color: var(--ink); }
+.selbox.ready { cursor: pointer; touch-action: manipulation; }
+.selbox.ready:focus { outline: none; }
+.selbox.ready:focus-visible,
+.selbox.open { border-color: #CDAE62; box-shadow: var(--focus); }
+.selbox.open { z-index: 2; }
+.datesel.menu-open { position: relative; z-index: 4; }
+.selbox.ready select { position: absolute; inset: auto; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); opacity: 0; pointer-events: none; }
+.selbox svg { flex: none; transition: transform .16s var(--ease-out); }
+.selbox.open svg { transform: rotate(180deg); }
+.selbox-menu { position: absolute; z-index: 3; top: calc(100% + 6px); inset-inline-start: 0; inset-inline-end: 0; margin: 0; padding: 6px; list-style: none; background: var(--authcard); color: var(--ink); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--authshadow); max-height: min(240px, 46vh); overflow: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; opacity: 0; visibility: hidden; transform: translateY(-6px); pointer-events: none; transition: opacity .16s var(--ease-out), transform .16s var(--ease-out), visibility 0s linear .16s; }
+.selbox.open .selbox-menu { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; transition: opacity .16s var(--ease-out), transform .16s var(--ease-out), visibility 0s; }
+.selbox-menu.up { top: auto; bottom: calc(100% + 6px); }
+.selbox-opt { display: flex; align-items: center; min-height: 44px; padding: 8px 12px; border-radius: 10px; font: 500 15px/1.4 var(--font-fa, Vazirmatn), sans-serif; color: var(--ink); text-align: start; cursor: pointer; user-select: none; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.selbox-opt.hot { background: var(--navon); }
+.selbox-opt.on { background: var(--wash); color: var(--goldtxt); font-weight: 700; }
+.selbox-opt.on.hot { box-shadow: inset 0 0 0 1.5px #CDAE62; }
 .card form, .stack { width: 100%; display: flex; flex-direction: column; align-items: center; }
 
 @media (max-width: 1100px) {
@@ -475,7 +492,7 @@
   .grid4, .thumbs { gap: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .side { transition: none; }
+  .side, .selbox svg, .selbox-menu { transition: none; }
 }
 .tog .ico-sun { display: none; }
 html[data-theme="dark"] .tog .ico-moon { display: none; }

@@ -205,6 +205,253 @@
     }, 1000);
   }
 
+  var openSelbox = null;
+  var selboxSeq = 0;
+
+  function selItems(label) {
+    var menu = label.querySelector('.selbox-menu');
+    if (!menu) return [];
+    return Array.prototype.slice.call(menu.querySelectorAll('.selbox-opt'));
+  }
+
+  function revealOpt(menu, el, center) {
+    if (center) {
+      menu.scrollTop = Math.max(0, el.offsetTop - (menu.clientHeight - el.offsetHeight) / 2);
+      return;
+    }
+    var top = el.offsetTop;
+    var bottom = top + el.offsetHeight;
+    if (top < menu.scrollTop) menu.scrollTop = Math.max(0, top - 6);
+    else if (bottom > menu.scrollTop + menu.clientHeight) menu.scrollTop = bottom - menu.clientHeight + 6;
+  }
+
+  function setHot(label, index, center) {
+    var items = selItems(label);
+    if (!items.length) return;
+    var next = index;
+    if (next < 0) next = items.length - 1;
+    if (next >= items.length) next = 0;
+    items.forEach(function (el, i) { el.classList.toggle('hot', i === next); });
+    label.setAttribute('aria-activedescendant', items[next].id);
+    var menu = label.querySelector('.selbox-menu');
+    if (menu) revealOpt(menu, items[next], center);
+  }
+
+  function hotIndex(label) {
+    var items = selItems(label);
+    for (var i = 0; i < items.length; i += 1) {
+      if (items[i].classList.contains('hot')) return i;
+    }
+    return -1;
+  }
+
+  function placeSelMenu(label) {
+    var menu = label.querySelector('.selbox-menu');
+    if (!menu) return;
+    menu.classList.remove('up');
+    var rect = label.getBoundingClientRect();
+    var limit = Math.min(menu.scrollHeight, 240, window.innerHeight * 0.46);
+    var below = window.innerHeight - rect.bottom;
+    var above = rect.top;
+    if (below < limit + 16 && above > below) menu.classList.add('up');
+  }
+
+  function markDateRow(label) {
+    var row = label.closest('.datesel');
+    if (!row) return;
+    row.classList.toggle('menu-open', !!row.querySelector('.selbox.open'));
+  }
+
+  function closeSelbox(label) {
+    if (!label || !label.classList.contains('open')) return;
+    label.classList.remove('open');
+    label.setAttribute('aria-expanded', 'false');
+    label.removeAttribute('aria-activedescendant');
+    var menu = label.querySelector('.selbox-menu');
+    if (menu) menu.setAttribute('aria-hidden', 'true');
+    if (openSelbox === label) openSelbox = null;
+    markDateRow(label);
+  }
+
+  function openSelboxMenu(label) {
+    document.querySelectorAll('.selbox.open').forEach(function (box) {
+      if (box !== label) closeSelbox(box);
+    });
+    label.classList.add('open');
+    label.setAttribute('aria-expanded', 'true');
+    var menu = label.querySelector('.selbox-menu');
+    if (menu) menu.setAttribute('aria-hidden', 'false');
+    openSelbox = label;
+    markDateRow(label);
+    placeSelMenu(label);
+    var items = selItems(label);
+    var selected = 0;
+    items.forEach(function (el, i) { if (el.classList.contains('on')) selected = i; });
+    setHot(label, selected, true);
+  }
+
+  function chooseSelbox(label, value) {
+    var select = label.querySelector('select');
+    if (!select) return;
+    var changed = select.value !== value;
+    select.value = value;
+    if (changed) select.dispatchEvent(new Event('change', { bubbles: true }));
+    else syncSelbox(select);
+    closeSelbox(label);
+    label.focus();
+  }
+
+  function syncSelbox(select) {
+    var label = select.closest('.selbox');
+    if (!label) return;
+    var span = label.querySelector('span');
+    var option = select.selectedIndex >= 0 ? select.options[select.selectedIndex] : null;
+    var empty = !select.value;
+    if (span && option) span.textContent = faNum(option.text);
+    label.classList.toggle('has-value', !empty);
+    selItems(label).forEach(function (el) {
+      var on = el.getAttribute('data-value') === select.value;
+      el.classList.toggle('on', on);
+      el.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+  }
+
+  function bindSelbox(label) {
+    var select = label.querySelector('select');
+    if (!select) return;
+    if (label.getAttribute('data-ready') === '1') {
+      syncSelbox(select);
+      return;
+    }
+    selboxSeq += 1;
+    label.setAttribute('data-ready', '1');
+    label.classList.add('ready');
+    label.tabIndex = 0;
+    label.setAttribute('role', 'combobox');
+    label.setAttribute('aria-haspopup', 'listbox');
+    label.setAttribute('aria-expanded', 'false');
+    select.tabIndex = -1;
+    select.setAttribute('aria-hidden', 'true');
+    var span = label.querySelector('span');
+    if (span && !span.id) span.id = 'selbox-val-' + selboxSeq;
+    if (span) label.setAttribute('aria-labelledby', span.id);
+    var menu = document.createElement('ul');
+    menu.className = 'selbox-menu';
+    menu.id = 'selbox-menu-' + selboxSeq;
+    menu.setAttribute('role', 'listbox');
+    menu.setAttribute('aria-hidden', 'true');
+    label.setAttribute('aria-controls', menu.id);
+    var picking = false;
+    Array.prototype.forEach.call(select.options, function (option) {
+      if (!option.value) return;
+      var item = document.createElement('li');
+      item.className = 'selbox-opt';
+      item.id = menu.id + '-' + option.value;
+      item.setAttribute('role', 'option');
+      item.setAttribute('data-value', option.value);
+      item.textContent = faNum(option.text);
+      item.setAttribute('aria-selected', 'false');
+      menu.appendChild(item);
+    });
+    label.appendChild(menu);
+    label.addEventListener('pointerdown', function (event) {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      if (event.target.closest && event.target.closest('.selbox-menu')) return;
+      event.preventDefault();
+      label.focus();
+    });
+    label.addEventListener('click', function (event) {
+      if (event.target.closest && event.target.closest('.selbox-menu')) return;
+      event.preventDefault();
+      if (label.classList.contains('open')) closeSelbox(label);
+      else openSelboxMenu(label);
+    });
+    menu.addEventListener('pointerdown', function (event) {
+      picking = true;
+      event.preventDefault();
+    });
+    menu.addEventListener('pointerup', function () {
+      setTimeout(function () { picking = false; }, 0);
+    });
+    menu.addEventListener('pointerover', function (event) {
+      var opt = event.target.closest ? event.target.closest('.selbox-opt') : null;
+      if (!opt || !menu.contains(opt)) return;
+      setHot(label, selItems(label).indexOf(opt));
+    });
+    menu.addEventListener('click', function (event) {
+      var opt = event.target.closest ? event.target.closest('.selbox-opt') : null;
+      if (!opt) return;
+      event.preventDefault();
+      event.stopPropagation();
+      chooseSelbox(label, opt.getAttribute('data-value'));
+    });
+    label.addEventListener('keydown', function (event) {
+      var open = label.classList.contains('open');
+      var key = event.key;
+      if (key === 'ArrowDown' || key === 'ArrowUp') {
+        event.preventDefault();
+        if (!open) openSelboxMenu(label);
+        else setHot(label, hotIndex(label) + (key === 'ArrowDown' ? 1 : -1));
+        return;
+      }
+      if (key === 'Home' || key === 'End') {
+        if (!open) return;
+        event.preventDefault();
+        setHot(label, key === 'Home' ? 0 : selItems(label).length - 1);
+        return;
+      }
+      if (key === 'Enter' || key === ' ') {
+        event.preventDefault();
+        if (!open) openSelboxMenu(label);
+        else {
+          var items = selItems(label);
+          var index = hotIndex(label);
+          if (index < 0) index = 0;
+          if (items[index]) chooseSelbox(label, items[index].getAttribute('data-value'));
+        }
+        return;
+      }
+      if (key === 'Escape') {
+        if (!open) return;
+        event.preventDefault();
+        closeSelbox(label);
+        return;
+      }
+      if (key === 'Tab' && open) closeSelbox(label);
+    });
+    label.addEventListener('focusout', function (event) {
+      if (picking) return;
+      if (event.relatedTarget && label.contains(event.relatedTarget)) return;
+      closeSelbox(label);
+    });
+    syncSelbox(select);
+  }
+
+  function syncSelboxes() {
+    document.querySelectorAll('.selbox').forEach(bindSelbox);
+  }
+
+  document.addEventListener('change', function (event) {
+    var select = event.target;
+    if (!select || select.tagName !== 'SELECT' || !select.closest || !select.closest('.selbox')) return;
+    syncSelbox(select);
+  });
+  document.addEventListener('click', function (event) {
+    if (!openSelbox || openSelbox.contains(event.target)) return;
+    closeSelbox(openSelbox);
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape' || !openSelbox) return;
+    if (openSelbox.contains(document.activeElement)) return;
+    event.preventDefault();
+    var box = openSelbox;
+    closeSelbox(box);
+    box.focus();
+  });
+  window.addEventListener('resize', function () {
+    if (openSelbox) placeSelMenu(openSelbox);
+  });
+
   function bootPage() {
     bindDrawer();
     closeDrawer();
@@ -228,6 +475,7 @@
       });
     }
     showSettings();
+    syncSelboxes();
     if (window.gdlSyncTheme) window.gdlSyncTheme();
     var play = document.getElementById('play');
     var vid = document.getElementById('vid');

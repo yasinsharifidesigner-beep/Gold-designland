@@ -176,7 +176,11 @@ block('auth', 'خطا', [
   ['auth.errPass', 'رمز و تکرار یکی نیستند'],
   ['auth.errNoUser', 'حساب پیدا نشد'],
   ['auth.errBadPass', 'رمز نادرست'],
-  ['auth.errBlocked', 'حساب مسدود']
+  ['auth.errBlocked', 'حساب مسدود'],
+  ['auth.errSms', 'خطای ارسال پیامک'],
+  ['auth.errMany', 'سقف درخواست کد'],
+  ['auth.errLocked', 'تلاش بیش از حد'],
+  ['auth.errExpired', 'کد منقضی']
 ]);
 
 block('panel', 'منوی کناری', [

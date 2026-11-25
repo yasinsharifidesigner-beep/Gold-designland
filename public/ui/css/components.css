@@ -362,8 +362,8 @@
 .card .btn { width: 100%; height: 52px; border-radius: 14px; font-size: 16.5px; box-shadow: 0 6px 16px rgba(191,155,82,.28); margin-top: 4px; }
 .link { font-size: 14.5px; font-weight: 600; color: var(--goldtxt); text-align: center; margin-top: 12px; }
 .sublink { font-size: 14px; font-weight: 500; color: var(--muted); text-align: center; margin-top: 12px; }
-.otp { display: flex; direction: ltr; gap: 8px; justify-content: center; margin-bottom: 12px; width: 100%; }
-.otp input { width: 52px; height: 56px; border-radius: 12px; background: var(--fieldbg); border: 1px solid var(--border); text-align: center; font: 700 24px Vazirmatn; color: var(--ink); }
+.otp { display: flex; direction: ltr; flex-direction: row; gap: 8px; justify-content: center; margin-bottom: 12px; width: 100%; }
+.otp input { width: 52px; height: 56px; border-radius: 12px; background: var(--fieldbg); border: 1px solid var(--border); text-align: center; direction: ltr; font: 700 24px Vazirmatn; color: var(--ink); }
 .otp input.on { border: 1.6px solid #CDAE62; box-shadow: var(--focus); }
 .timer { font-size: 14px; font-weight: 500; color: var(--muted); text-align: center; margin-bottom: 14px; }
 .timer a { color: var(--goldtxt); font-weight: 600; }

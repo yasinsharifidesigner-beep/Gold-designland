@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt');
 const { getKnex } = require('./db');
 const texts = require('./texts');
 
-const DEMO_CODE = '42971';
 const STAGES = ['idea', 'refine', 'assistant', 'image'];
 
 function db() { return getKnex(); }
@@ -646,7 +645,7 @@ function tehranWeekStart() {
 }
 
 module.exports = {
-  DEMO_CODE, STAGES, giftLeft, stageIndex, designs, log, nextSeq,
+  STAGES, giftLeft, stageIndex, designs, log, nextSeq,
   userById, userByPhone, createUser, updateUser, setPassword, checkPassword, hasWork,
   projectsOf, projectBySlug, saveProject, deleteProject,
   chatsOf, chatById, createChat, saveChat, deleteChat,

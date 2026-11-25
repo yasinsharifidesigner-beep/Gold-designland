@@ -17,10 +17,9 @@
     <div class="oknote"><%= t('auth.codeFor') %> <b class="phone"><%= typeof phoneShow === 'undefined' ? '' : phoneShow %></b> <%= t('auth.codeSentTail') %></div>
     <form method="post" action="<%= mode === 'signup2' ? '/auth/signup/verify' : '/auth/forgot/verify' %>">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
-      <div class="otp" id="otp">
-        <% for (let i = 0; i < 5; i++) { %><input name="d<%= i %>" inputmode="numeric" maxlength="1" class="<%= i === 4 ? 'on' : '' %>"><% } %>
-      </div>
-      <div class="timer" id="timer" data-left="<%= typeof left === 'undefined' ? 58 : left %>" data-resend="<%= t('auth.resend') %>"><%= t('auth.resendIn') %> <span class="num">۰:۵۸</span></div>
+      <%- include('partials/otp') %>
+      <% const secs = Math.max(0, Number(left) || 0); const clock = fa(Math.floor(secs / 60)) + ':' + fa(String(secs % 60).padStart(2, '0')); %>
+      <div class="timer" id="timer" data-left="<%= secs %>" data-resend="<%= t('auth.resend') %>"><% if (secs <= 0) { %><a href="?resend=1"><%= t('auth.resend') %></a><% } else { %><%= t('auth.resendIn') %> <span class="num"><%= clock %></span><% } %></div>
       <button class="btn" type="submit"><%= mode === 'signup2' ? t('auth.confirm') : t('auth.go') %></button>
     </form>
     <a class="link" href="<%= mode === 'signup2' ? '/auth/signup' : '/auth/forgot' %>"><%= t('auth.fixPhone') %></a>

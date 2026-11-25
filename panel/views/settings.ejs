@@ -82,7 +82,7 @@
         <div class="oknote" style="margin-top:16px"><%= t('auth.codeFor') %> <b class="phone"><%= phoneShow %></b> <%= t('auth.codeSentTail') %></div>
         <form method="post" action="/panel/settings/phone/verify">
           <input type="hidden" name="_csrf" value="<%= csrf %>">
-          <div class="otp" id="otp"><% for (let i=0;i<5;i++) { %><input name="d<%= i %>" maxlength="1" inputmode="numeric"><% } %></div>
+          <%- include('partials/otp') %>
           <button class="btn form" type="submit"><%= t('auth.confirm') %></button>
         </form>
       <% } %>

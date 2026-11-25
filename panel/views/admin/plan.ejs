@@ -1,6 +1,6 @@
 <%- include('open', { bare: false, active: 'plans', title: plan ? plan.name : 'اشتراک جدید' }) %>
 <header class="head"><h1 class="h1s"><%= plan ? plan.name : 'اشتراک جدید' %></h1></header>
-<% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+<%- include('../partials/toast-seed', { kind: 'error', text: error }) %>
 <section class="section">
   <form method="post" action="<%= plan ? '/admin/plans/' + plan.id : '/admin/plans' %>">
     <input type="hidden" name="_csrf" value="<%= csrf %>">

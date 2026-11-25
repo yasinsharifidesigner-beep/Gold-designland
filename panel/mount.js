@@ -86,6 +86,12 @@ module.exports = function mount(app) {
     res.render('landing');
   });
 
+  function passwordPairError(a, b) {
+    if (lib.normalizePassword(a) !== lib.normalizePassword(b)) return texts.t('auth.errPass');
+    if (!lib.passwordOk(a)) return texts.t('auth.errPassRule');
+    return '';
+  }
+
   function authView(res, mode, extra) {
     res.render('auth', Object.assign({
       mode,
@@ -137,11 +143,13 @@ module.exports = function mount(app) {
     if (!signupReady(req, 2)) return res.redirect('/auth/signup');
     const phone = req.session.signup.phone;
     let error = '';
+    let notice = '';
     if (req.query.resend === '1') {
       const sent = await otp.issue({ phone, purpose: 'signup', ip: clientIp(req) });
       if (!sent.ok) error = otp.message(sent.reason);
+      else if (sent.skipped) notice = texts.t('auth.waitResend');
     }
-    await showCode(res, 'signup2', phone, { error });
+    await showCode(res, 'signup2', phone, { error, notice });
   }));
   app.post('/auth/signup/verify', csrf, asyncRoute(async function (req, res) {
     if (!signupReady(req, 2)) return res.redirect('/auth/signup');
@@ -183,7 +191,8 @@ module.exports = function mount(app) {
   });
   app.post('/auth/signup/password', csrf, asyncRoute(async function (req, res) {
     if (!signupReady(req, 4)) return res.redirect('/auth/signup');
-    if (!req.body.password || req.body.password !== req.body.again) return authView(res, 'signup4', { error: texts.t('auth.errPass') });
+    const passError = passwordPairError(req.body.password, req.body.again);
+    if (passError) return authView(res, 'signup4', { error: passError });
     const s = req.session.signup;
     if (await repo.userByPhone(s.phone)) {
       req.session.signup = null;
@@ -227,11 +236,13 @@ module.exports = function mount(app) {
     if (!req.session.forgot || !req.session.forgot.phone) return res.redirect('/auth/forgot');
     const phone = req.session.forgot.phone;
     let error = '';
+    let notice = '';
     if (req.query.resend === '1') {
       const sent = await otp.issue({ phone, purpose: 'login', ip: clientIp(req) });
       if (!sent.ok) error = otp.message(sent.reason);
+      else if (sent.skipped) notice = texts.t('auth.waitResend');
     }
-    await showCode(res, 'forgot2', phone, { error });
+    await showCode(res, 'forgot2', phone, { error, notice });
   }));
   app.post('/auth/forgot/verify', csrf, asyncRoute(async function (req, res) {
     if (!req.session.forgot || !req.session.forgot.phone) return res.redirect('/auth/forgot');
@@ -686,7 +697,9 @@ module.exports = function mount(app) {
   }));
   app.post('/panel/settings/phone', guard, csrf, asyncRoute(async function (req, res) {
     const phone = lib.normalizePhone(req.body.newPhone || req.session.newPhone);
-    if (!/^09\d{9}$/.test(phone)) return res.redirect('/panel/settings?phone=1');
+    if (!/^09\d{9}$/.test(phone)) {
+      return settingsPage(req, res, { changePhone: true, newPhone: req.body.newPhone || '', error: texts.t('auth.errPhone') });
+    }
     const sent = await otp.issue({ phone, purpose: 'phone', ip: clientIp(req) });
     if (!sent.ok) {
       req.session.newPhone = phone;
@@ -717,9 +730,10 @@ module.exports = function mount(app) {
   app.post('/panel/settings/password', guard, csrf, asyncRoute(async function (req, res) {
     const user = res.locals.user;
     if (req.session.authMethod !== 'otp' && user.passwordHash && !(await repo.checkPassword(user, req.body.current))) {
-      return res.redirect('/panel/settings#password');
+      return settingsPage(req, res, { tab: 'password', error: texts.t('auth.errBadPass') });
     }
-    if (!req.body.next || req.body.next !== req.body.again) return res.redirect('/panel/settings#password');
+    const passError = passwordPairError(req.body.next, req.body.again);
+    if (passError) return settingsPage(req, res, { tab: 'password', error: passError });
     await repo.setPassword(user.id, req.body.next);
     req.session.authMethod = 'password';
     await repo.log(user.id, 'password', 'رمز عبور عوض شد.');

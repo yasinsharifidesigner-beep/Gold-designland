@@ -1,31 +1,33 @@
 <%- include('partials/open', { active: 'settings', mainClass: 'set', title: t('settings.title'), logoutOpen: tab === 'logout' }) %>
+<% const settingsTab = typeof tab === 'undefined' ? 'account' : tab; const openTab = (settingsTab === 'password' || settingsTab === 'appearance' || settingsTab === 'notifications') ? settingsTab : 'account'; %>
 <header class="head"><h1 class="h1s"><%= t('settings.title') %></h1><p class="sub"><%= t('settings.sub') %></p></header>
-<div class="board">
+<div class="board" data-open="<%= openTab %>">
   <nav class="tabs" aria-label="<%= t('settings.tabs') %>">
-    <a class="tab on" href="#account"><%- include('partials/ico', { name: 'user' }) %><%= t('settings.account') %></a>
-    <a class="tab" href="#password"><%- include('partials/ico', { name: 'lock' }) %><%= t('settings.password') %></a>
-    <a class="tab" href="#appearance"><%- include('partials/ico', { name: 'sun' }) %><%= t('settings.appearance') %></a>
-    <a class="tab" href="#notifications"><%- include('partials/ico', { name: 'bell' }) %><%= t('settings.notes') %></a>
+    <a class="tab <%= openTab === 'account' ? 'on' : '' %>" href="#account"><%- include('partials/ico', { name: 'user' }) %><%= t('settings.account') %></a>
+    <a class="tab <%= openTab === 'password' ? 'on' : '' %>" href="#password"><%- include('partials/ico', { name: 'lock' }) %><%= t('settings.password') %></a>
+    <a class="tab <%= openTab === 'appearance' ? 'on' : '' %>" href="#appearance"><%- include('partials/ico', { name: 'sun' }) %><%= t('settings.appearance') %></a>
+    <a class="tab <%= openTab === 'notifications' ? 'on' : '' %>" href="#notifications"><%- include('partials/ico', { name: 'bell' }) %><%= t('settings.notes') %></a>
     <div class="tabs-foot"><a class="tab out" href="#logout"><%- include('partials/ico', { name: 'out' }) %><%= t('settings.logout') %></a></div>
   </nav>
   <section class="pane">
-    <div data-tab="password" hidden>
+    <div data-tab="password" <%= openTab === 'password' ? '' : 'hidden' %>>
       <h2><%= t('settings.password') %></h2>
       <form class="form1" method="post" action="/panel/settings/password">
         <input type="hidden" name="_csrf" value="<%= csrf %>">
         <% if (showCurrent) { %><label class="field"><span><%= t('settings.current') %></span><input type="password" name="current"></label><% } %>
-        <label class="field"><span><%= t('settings.next') %></span><input type="password" name="next"></label>
+        <label class="field"><span><%= t('settings.next') %></span><input type="password" name="next" aria-describedby="passhint"></label>
+        <p class="passhint" id="passhint" data-pass-hint data-pass-input="next"><span class="passhint-mark" aria-hidden="true"></span><span><%= t('auth.passHint') %></span></p>
         <label class="field"><span><%= t('settings.again') %></span><input type="password" name="again"></label>
         <button class="btn form" type="submit"><%= t('settings.changePass') %></button>
       </form>
-    </div><div data-tab="appearance" hidden>
+    </div><div data-tab="appearance" <%= openTab === 'appearance' ? '' : 'hidden' %>>
       <h2><%= t('settings.appearance') %></h2>
       <form class="themes" method="post" action="/panel/settings/appearance">
         <input type="hidden" name="_csrf" value="<%= csrf %>">
         <button class="theme <%= user.theme !== 'dark' ? 'on' : '' %>" name="theme" value="light" type="submit"><span class="mini light"><i><em></em></i><div><u></u><span><b></b><b></b></span></div></span><span class="lbl"><%= t('settings.light') %></span></button>
         <button class="theme <%= user.theme === 'dark' ? 'on' : '' %>" name="theme" value="dark" type="submit"><span class="mini dark"><i><em></em></i><div><u></u><span><b></b><b></b></span></div></span><span class="lbl"><%= t('settings.dark') %></span></button>
       </form>
-    </div><div data-tab="notifications" hidden>
+    </div><div data-tab="notifications" <%= openTab === 'notifications' ? '' : 'hidden' %>>
       <h2><%= t('settings.notes') %></h2>
       <div class="notes">
         <form method="post" action="/panel/settings/notifications">
@@ -39,7 +41,7 @@
             <button class="sw <%= user.notifyNewSession ? 'on' : '' %>" name="key" value="session" type="submit" aria-label="<%= t('settings.noteSession') %>"><i></i></button></div>
         </form>
       </div>
-    </div><div data-tab="account">
+    </div><div data-tab="account" <%= openTab === 'account' ? '' : 'hidden' %>>
       <header class="profile">
         <div class="ph">
           <div class="avt"><%- include('partials/ico', { name: 'user' }) %></div>
@@ -79,7 +81,7 @@
         </form>
       <% } %>
       <% if (codeSent) { %>
-        <div class="oknote" style="margin-top:16px"><%= t('auth.codeFor') %> <b class="phone"><%= phoneShow %></b> <%= t('auth.codeSentTail') %></div>
+        <% if (!error) { %><%- include('partials/toast-seed', { kind: 'success', text: t('auth.codeFor') + ' ' + phoneShow + ' ' + t('auth.codeSentTail') }) %><% } %>
         <form method="post" action="/panel/settings/phone/verify">
           <input type="hidden" name="_csrf" value="<%= csrf %>">
           <%- include('partials/otp') %>
@@ -87,8 +89,8 @@
         </form>
       <% } %>
     </div>
-    <% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
-    <% if (ok) { %><p class="oknote"><%= ok %></p><% } %>
+    <%- include('partials/toast-seed', { kind: 'error', text: error }) %>
+    <%- include('partials/toast-seed', { kind: 'success', text: ok }) %>
   </section>
 </div>
 <%- include('partials/close', { auth: false, logoutOpen: tab === 'logout' }) %>

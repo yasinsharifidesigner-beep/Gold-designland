@@ -3,7 +3,7 @@
   <h1 class="h1s"><%= person.firstName %> <%= person.lastName %></h1>
   <p class="sub num"><%= person.phone %> <% if (person.blocked) { %><span class="badge off">مسدود</span><% } %></p>
 </header>
-<% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+<%- include('../partials/toast-seed', { kind: 'error', text: error }) %>
 
 <section class="section">
   <h2>مشخصات</h2>

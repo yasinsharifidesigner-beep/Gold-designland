@@ -4,7 +4,7 @@
   <div class="brand">گولد دیزاین لند</div>
   <h2>ورود مدیر</h2>
   <% if (!enabled) { %>
-    <p class="err" style="text-align:right">ورود مدیر خاموش است. ADMIN_PHONE و ADMIN_PASSWORD را در محیط سرور بگذار.</p>
+    <%- include('../partials/toast-seed', { kind: 'error', text: 'ورود مدیر خاموش است. ADMIN_PHONE و ADMIN_PASSWORD را در محیط سرور بگذار.' }) %>
   <% } else { %>
     <form method="post" action="/admin/login">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
@@ -12,7 +12,7 @@
       <input class="afield" type="password" name="password" placeholder="رمز عبور" autocomplete="current-password">
       <button class="btn" type="submit">ورود</button>
     </form>
-    <% if (error) { %><p class="err"><%= error %></p><% } %>
+    <%- include('../partials/toast-seed', { kind: 'error', text: error }) %>
   <% } %>
 </article>
 <%- include('close', { bare: true }) %>

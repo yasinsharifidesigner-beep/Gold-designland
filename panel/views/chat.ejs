@@ -51,7 +51,7 @@
     </section>
   <% } %>
   <% if (typing) { %><div class="typing"><%= t('common.typing') %></div><% } %>
-  <% if (error) { %><p class="err"><%= error %></p><% } %>
+  <%- include('partials/toast-seed', { kind: 'error', text: error }) %>
 </div>
 <form class="composer w760" method="post" action="<%= action %>">
   <input type="hidden" name="_csrf" value="<%= csrf %>">

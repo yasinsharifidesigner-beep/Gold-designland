@@ -15,6 +15,15 @@ function toLatinDigits(value) {
     .replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
 }
 
+function normalizePassword(value) {
+  return toLatinDigits(value == null ? '' : value);
+}
+
+function passwordOk(value) {
+  const text = normalizePassword(value);
+  return text.length >= 6 && /\p{L}/u.test(text) && /\d/.test(text);
+}
+
 function normalizePhone(value) {
   let d = toLatinDigits(value).replace(/\D/g, '');
   if (d.startsWith('98') && d.length === 12) d = '0' + d.slice(2);
@@ -60,6 +69,6 @@ function faWhen(value) {
 }
 
 module.exports = {
-  faDigits, faMoney, toLatinDigits, normalizePhone, phoneSpaced, phoneMasked,
+  faDigits, faMoney, toLatinDigits, normalizePassword, passwordOk, normalizePhone, phoneSpaced, phoneMasked,
   MONTHS, csrfToken, checkCsrf, faWhen
 };

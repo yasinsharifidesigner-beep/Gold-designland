@@ -3,7 +3,7 @@
   <h1 class="h1s"><%= chat.title %></h1>
   <p class="sub"><a class="rowlink" href="/admin/users/<%= chat.userId %>"><%= userName %></a> — <%= kindLabel %></p>
 </header>
-<% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+<%- include('../partials/toast-seed', { kind: 'error', text: error }) %>
 <section class="section">
   <form method="post" action="/admin/chats/<%= chat.id %>">
     <input type="hidden" name="_csrf" value="<%= csrf %>">

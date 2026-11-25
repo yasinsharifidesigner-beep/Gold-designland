@@ -12,8 +12,8 @@
       <input name="code" placeholder="<%= t('sub.codePh') %>" aria-label="<%= t('sub.codePh') %>" value="<%= code || '' %>">
       <button class="btn-sec" type="submit"><%= t('sub.apply') %></button>
     </form>
-    <% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
-    <% if (ok) { %><p class="oknote"><%= ok %></p><% } %>
+    <%- include('partials/toast-seed', { kind: 'error', text: error }) %>
+    <%- include('partials/toast-seed', { kind: 'success', text: ok }) %>
     <div class="bill">
       <div><em><%= t('sub.amount') %></em><strong class="num"><%= money(plan.price) %> <%= t('sub.toman') %></strong></div>
       <div><em><%= t('sub.discount') %></em><strong class="num"><%= money(discount) %> <%= t('sub.toman') %></strong></div>

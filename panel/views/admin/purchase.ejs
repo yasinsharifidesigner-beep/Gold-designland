@@ -1,6 +1,6 @@
 <%- include('open', { bare: false, active: 'purchases', title: row ? 'خرید' : 'خرید دستی' }) %>
 <header class="head"><h1 class="h1s"><%= row ? 'خرید' : 'خرید دستی' %></h1></header>
-<% if (error) { %><p class="err" style="text-align:right"><%= error %></p><% } %>
+<%- include('../partials/toast-seed', { kind: 'error', text: error }) %>
 <section class="section">
   <form method="post" action="<%= row ? '/admin/purchases/' + row.id : '/admin/purchases' %>">
     <input type="hidden" name="_csrf" value="<%= csrf %>">

@@ -371,6 +371,7 @@
 .selbox { height: 52px; border-radius: 14px; background: var(--fieldbg); border: 1px solid var(--border); padding: 0 14px; display: flex; align-items: center; justify-content: space-between; position: relative; }
 .selbox select { position: absolute; inset: 0; opacity: 0; width: 100%; }
 .selbox span { font: 500 15px Vazirmatn; color: var(--muted); }
+.selbox.has-value span { color: var(--ink); }
 .card form, .stack { width: 100%; display: flex; flex-direction: column; align-items: center; }
 
 @media (max-width: 1100px) {

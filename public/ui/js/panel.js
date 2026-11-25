@@ -205,6 +205,26 @@
     }, 1000);
   }
 
+  function syncSelbox(select) {
+    var label = select.closest('.selbox');
+    if (!label) return;
+    var span = label.querySelector('span');
+    var option = select.selectedIndex >= 0 ? select.options[select.selectedIndex] : null;
+    var empty = !select.value;
+    if (span && option) span.textContent = option.text;
+    label.classList.toggle('has-value', !empty);
+  }
+
+  function syncSelboxes() {
+    document.querySelectorAll('.selbox select').forEach(syncSelbox);
+  }
+
+  document.addEventListener('change', function (event) {
+    var select = event.target;
+    if (!select || select.tagName !== 'SELECT' || !select.closest || !select.closest('.selbox')) return;
+    syncSelbox(select);
+  });
+
   function bootPage() {
     bindDrawer();
     closeDrawer();
@@ -228,6 +248,7 @@
       });
     }
     showSettings();
+    syncSelboxes();
     if (window.gdlSyncTheme) window.gdlSyncTheme();
     var play = document.getElementById('play');
     var vid = document.getElementById('vid');

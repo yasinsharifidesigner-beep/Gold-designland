@@ -143,11 +143,13 @@ module.exports = function mount(app) {
     if (!signupReady(req, 2)) return res.redirect('/auth/signup');
     const phone = req.session.signup.phone;
     let error = '';
+    let notice = '';
     if (req.query.resend === '1') {
       const sent = await otp.issue({ phone, purpose: 'signup', ip: clientIp(req) });
       if (!sent.ok) error = otp.message(sent.reason);
+      else if (sent.skipped) notice = texts.t('auth.waitResend');
     }
-    await showCode(res, 'signup2', phone, { error });
+    await showCode(res, 'signup2', phone, { error, notice });
   }));
   app.post('/auth/signup/verify', csrf, asyncRoute(async function (req, res) {
     if (!signupReady(req, 2)) return res.redirect('/auth/signup');
@@ -234,11 +236,13 @@ module.exports = function mount(app) {
     if (!req.session.forgot || !req.session.forgot.phone) return res.redirect('/auth/forgot');
     const phone = req.session.forgot.phone;
     let error = '';
+    let notice = '';
     if (req.query.resend === '1') {
       const sent = await otp.issue({ phone, purpose: 'login', ip: clientIp(req) });
       if (!sent.ok) error = otp.message(sent.reason);
+      else if (sent.skipped) notice = texts.t('auth.waitResend');
     }
-    await showCode(res, 'forgot2', phone, { error });
+    await showCode(res, 'forgot2', phone, { error, notice });
   }));
   app.post('/auth/forgot/verify', csrf, asyncRoute(async function (req, res) {
     if (!req.session.forgot || !req.session.forgot.phone) return res.redirect('/auth/forgot');
@@ -693,7 +697,9 @@ module.exports = function mount(app) {
   }));
   app.post('/panel/settings/phone', guard, csrf, asyncRoute(async function (req, res) {
     const phone = lib.normalizePhone(req.body.newPhone || req.session.newPhone);
-    if (!/^09\d{9}$/.test(phone)) return res.redirect('/panel/settings?phone=1');
+    if (!/^09\d{9}$/.test(phone)) {
+      return settingsPage(req, res, { changePhone: true, newPhone: req.body.newPhone || '', error: texts.t('auth.errPhone') });
+    }
     const sent = await otp.issue({ phone, purpose: 'phone', ip: clientIp(req) });
     if (!sent.ok) {
       req.session.newPhone = phone;

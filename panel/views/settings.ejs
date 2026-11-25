@@ -81,7 +81,7 @@
         </form>
       <% } %>
       <% if (codeSent) { %>
-        <div class="oknote" style="margin-top:16px"><%= t('auth.codeFor') %> <b class="phone"><%= phoneShow %></b> <%= t('auth.codeSentTail') %></div>
+        <% if (!error) { %><%- include('partials/toast-seed', { kind: 'success', text: t('auth.codeFor') + ' ' + phoneShow + ' ' + t('auth.codeSentTail') }) %><% } %>
         <form method="post" action="/panel/settings/phone/verify">
           <input type="hidden" name="_csrf" value="<%= csrf %>">
           <%- include('partials/otp') %>

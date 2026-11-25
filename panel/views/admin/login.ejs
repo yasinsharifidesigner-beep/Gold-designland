@@ -4,7 +4,7 @@
   <div class="brand">گولد دیزاین لند</div>
   <h2>ورود مدیر</h2>
   <% if (!enabled) { %>
-    <p class="err" style="text-align:right">ورود مدیر خاموش است. ADMIN_PHONE و ADMIN_PASSWORD را در محیط سرور بگذار.</p>
+    <%- include('../partials/toast-seed', { kind: 'error', text: 'ورود مدیر خاموش است. ADMIN_PHONE و ADMIN_PASSWORD را در محیط سرور بگذار.' }) %>
   <% } else { %>
     <form method="post" action="/admin/login">
       <input type="hidden" name="_csrf" value="<%= csrf %>">

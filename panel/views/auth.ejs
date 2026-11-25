@@ -14,7 +14,9 @@
   <% } else if (mode === 'signup2' || mode === 'forgot2') { %>
     <h2><%= mode === 'signup2' ? t('auth.codeTitle') : t('auth.otpTitle') %></h2>
     <% if (mode === 'signup2') { %><div class="step"><%= t('auth.step', { n: fa(2) }) %></div><% } %>
-    <div class="oknote"><%= t('auth.codeFor') %> <b class="phone"><%= typeof phoneShow === 'undefined' ? '' : phoneShow %></b> <%= t('auth.codeSentTail') %></div>
+    <% const sentLine = t('auth.codeFor') + ' ' + (typeof phoneShow === 'undefined' ? '' : phoneShow) + ' ' + t('auth.codeSentTail'); %>
+    <% const codeNotice = typeof notice !== 'undefined' ? notice : ''; %>
+    <% if (codeNotice) { %><%- include('partials/toast-seed', { kind: 'info', text: codeNotice }) %><% } else if (!error) { %><%- include('partials/toast-seed', { kind: 'success', text: sentLine }) %><% } %>
     <form method="post" action="<%= mode === 'signup2' ? '/auth/signup/verify' : '/auth/forgot/verify' %>" autocomplete="off">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
       <%- include('partials/otp') %>
